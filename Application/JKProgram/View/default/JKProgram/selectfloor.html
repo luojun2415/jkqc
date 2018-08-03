@@ -1,0 +1,136 @@
+<extend name="Public/base"/>
+<block name="body">
+    <div class="main-title">
+        <h2>{$floor_name}&nbsp;楼栋详情</h2>
+        <div class="with-padding">
+            <a onClick="javascript :history.back(-1);" class="btn btn-ajax btn-success btn">返回</a>
+            <a class="btn a_form btn-success"
+                    target-form="ids">{:L('修改楼栋与房间信息')}
+            </a>
+            <a class="btn a_form btn-success" url="{:U('JKProgram/surfloor')}"
+                    target-form="ids">{:L('楼层实测信息')}
+            </a>
+            <button class="btn btn-danger ajax-post confirm" url="{:U('JKProgram/delfloor')}"
+                    target-form="ids">{:L('_DELETE_')}
+            </button>
+        </div>
+        <!-- <div class="with-padding">
+            <a href="{:U('JKProgram/addlouc?', array('id' => $floor_pid))}" class="btn btn-ajax btn-success btn">添加新层</a>
+        </div> -->
+    </div>
+
+    <div class="with-padding">
+    	<form id="a_form" action="{:U('JKProgram/editfloor')}" style="overflow-x:auto;" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal">
+        <ul class="module-list">
+            <volist name="arr_floor" key="k" id="vo">
+
+                <li class="clearfix" style="width: 100%">
+                	<span class="text-muted">{$vo.title}</span><br/>
+                	<ul>
+                		
+                		<li class="clearfix" style="width: 100%;border: none;">
+                		<input id="myd_{$k}" class="myd ids row-selected" type="checkbox" >
+                		<div class="content-wrapper" style="width: 100px;">
+           					<div class="title"></div>
+           				</div>
+                		<ul style="display: -webkit-inline-box;">
+                		<volist name="vo['_'][0]['_']" key="j" id="finit">
+	                		<li style="width: 80px;margin-bottom:0px;padding: 0;text-align: center;border: none;">
+	    						<div class="title"><input id="myd_{$k}_c_{$j}" class=" myc ids row-selected" 
+	    						type="checkbox"  value=""></div>		
+	       					</li>
+                		</volist>
+                		</ul>
+                		</li>
+                		<volist name="vo._" id="ch">
+                			
+                			<li class="clearfix popup-gallery" style="width: 100%;float:left;">
+	                			<input class="myd_{$k} myr_{$k} ids row-selected"  
+	                			type="checkbox" name="id[]" value="{$ch.id}">
+                				<div class="content-wrapper" style="width: 100px;">
+                					<div class="title">{$ch.title}</div>
+                				</div>
+                				<div>
+                				<ul style="display: -webkit-inline-box;">
+                					<volist name="ch._" key="j" id="sh">
+                					<li class="popup-gallery" style="width: 80px;margin-bottom:0px;">
+               							<div class="title each">{$sh.title}
+               							<input class="myd_{$k} myd_{$k}_c_{$j} ids row-selected" type="checkbox" name="id[]" value="{$sh.id}">
+               							<notempty name="sh.imgpath">	
+	  										<a href="{$sh.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+		   								<else/>
+		  									<a href="/Application/Admin/Static/images/project.jpg" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+		   								</notempty>    
+               								<notempty name="sh.imgpath">
+               									<img src="{$sh.imgpath}" style="width:60px;height:60px;">
+               								<else/>
+               									<img src="/Application/Admin/Static/images/project.jpg" style="width:60px;height:60px;">
+               								</notempty>
+               								</a></div>
+                					</li>
+                					</volist>
+                				</ul>
+                				</div>
+                				<div class="each" style="display: inline-block;float: right;">
+                				<notempty name="ch.imgpath">	
+  									<a href="{$ch.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+   								<else/>
+  									<a href="/Application/Admin/Static/images/project.jpg" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+   								</notempty>         				
+               					<notempty name="ch.imgpath">
+  									<img src="{$ch.imgpath}" style="width:80px;height:100px;">
+   								<else/>
+  									<img src="/Application/Admin/Static/images/project.jpg" style="width:80px;height:100px;">
+   								</notempty>
+               					</a></div>
+                			</li>
+                		</volist>
+                	</ul> 
+                </li>
+
+            </volist>
+            
+        </ul>
+        </form>
+    </div>
+	
+</block>
+<block name="script">
+<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('.popup-gallery').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a',
+                    type: 'image',
+                    tLoading: '正在载入 #%curr%...',
+                    mainClass: 'mfp-img-mobile',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                    },
+                    image: {
+                        tError: '<a href="%url%">图片 #%curr%</a> 无法被载入.',
+                        titleSrc: function (item) {
+                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                            return '';
+                        },
+                        verticalFit: true
+                    }
+                });
+            });
+        });
+        
+        $('.myd').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        });
+        $('.myc').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        });
+    </script>
+</block>

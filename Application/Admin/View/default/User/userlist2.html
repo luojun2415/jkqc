@@ -1,0 +1,210 @@
+<extend name="Public/base"/>
+
+<block name="body">
+		
+	<!--zui-->
+   <!-- <link rel="stylesheet" type="text/css" href="__ZUI__/css/zui.css" media="all"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="__CSS__/admin.css" media="all"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="__CSS__/ext.css" media="all"> -->
+    <!-- zui end -->
+    <!-- <link rel="stylesheet" type="text/css" href="__CSS__/module.css"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="__CSS__/style.css" media="all"> -->
+    
+	<!-- <link href="__ZUI__/lib/chosen/chosen.css" type="text/css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="__JS__/kanban/kanban.css" media="all"> -->
+    
+    <!-- <link href="__PUBLIC__/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
+     
+  
+  
+   <div class="main-title">
+       <h2>{:L('_USER_LIST_')}</h2>
+   </div>
+   <div class="clearfix">
+       <div class="col-xs-10">
+		
+		<a href="#" onclick="adduser()" class="btn btn-ajax">新增</a>
+           <button class="btn ajax-post confirm"  url="{:U('User/changeStatus',array('method'=>'resumeUser'))}"
+                   target-form="ids">{:L('_ENABLED_')}
+           </button>
+           <button class="btn ajax-post confirm"  url="{:U('User/changeStatus',array('method'=>'forbidUser'))}"
+                   target-form="ids">{:L('_DISABLE_')}
+           </button>
+           <button class="btn ajax-post  confirm"  url="{:U('User/changeStatus',array('method'=>'deleteUser'))}"
+                   target-form="ids">{:L('_DELETE_')}
+           </button>
+          <!--  <button class="btn " onclick="post_select_form()"
+                   target-form="ids">{:L('_USER_GROUP_SELECT_')}
+           </button> -->
+           <button class="btn ajax-post confirm" data-confirm="{:L('_PW_RESET_CONFIRM_')}" url="{:U('User/initPass')}" target-form="ids">{:L('_PW_RESET_')}
+           </button>
+           <span style="font-size: 14px;color: #999898;margin-left: 11px;">{:L('_PW_RESET_TIP_')}</span>
+       </div>
+       <script>
+           function post_select_form(){
+               var ids=$('.ids').serialize();
+               var title="{:L('_USER_GROUP_SELECT_')}";
+               $.post("{:U('user/changeGroup')}",ids,function(msg){
+                   (new $.zui.ModalTrigger({custom: msg,title:title})).show();
+               })
+           }
+       </script>
+       
+       <!-- 高级搜索 -->
+       <div class="search-form  col-xs-2 text-right">
+           <div class="input-group">
+               <input type="text" name="nickname" class="search-input form-control" value="{:I('nickname')}"
+                      placeholder="{:L('_PLACEHOLDER_NICKNAME_ID_')}">
+                                <span class="input-group-btn">  <a class="btn btn-default" href="javascript:;" id="search" "><i class="icon-search"></i></a></span>
+           </div>
+       </div>
+   </div>
+   <!-- 数据列表 -->
+   <div id="userList" class="data-table with-padding" style="" >
+	<span style="color:gray;margin:5px;">
+	该用户组共有
+	<span style="color:red">{$_total}</span>
+	个用户
+	</span>
+       <table class="table table-bordered table-striped ">
+           <thead>
+           <tr>
+               <th class="row-selected row-selected col-md-1"><input class="check-all" type="checkbox"/></th>
+               <th class="col-md-1">{:L('序号')}</th>
+               <th class="col-md-2">{:L("登录账号")}</th>
+               <th class="col-md-1">{:L('姓名')}</th>
+               <th class="col-md-2">{:L('部门')}</th>
+               <th class="col-md-1">{:L("职位")}</th>
+               <th class="col-md-1">{:L("联系电话")}</th>
+              
+               <th class="col-md-1">{:L("_OPERATE_")}</th>
+               <th class="col-md-1">{:L('_LOGIN_COUNT_')}</th>
+               <th class="col-md-1">{:L('_LAST_LOGIN_TIME_')}</th>
+              
+               <th class="col-md-1">{:L('_STATUS_')}</th>
+
+           </tr>
+           </thead>
+           <tbody>
+           <notempty name="_list">
+               <volist name="_list" id="vo">
+                   <tr>
+                       <td class="col-md-1"><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}"/></td>
+                       <td class="col-md-1">{$vo.num}</td>
+                       
+                       <td class="col-md-2"><a src="{:U('Admin/User/addPass?id='.$vo['uid'])}" href="#" class="addPass">{$vo.nickname|op_t}</a></td> 
+                       <td class="col-md-1">{$vo.username}</td>
+                       <td class="col-md-2">{$vo.department}</td>
+                       <td class="col-md-1">{$vo.position}</td>
+                       <td class="col-md-1">{$vo.mobile}</td>
+                       <td class="col-md-1">
+                           <eq name="vo.status" value="1">
+                               <a href="{:U('User/changeStatus?method=forbidUser&id='.$vo['uid'])}"
+                                  class="ajax-get">{:L('_DISABLE_')}</a>
+                               <else/>
+                               <a href="{:U('User/changeStatus?method=resumeUser&id='.$vo['uid'])}"
+                                  class="ajax-get">{:L('_ENABLE_')}</a>
+                           </eq>
+                           <a href="#"  src="{:U('AuthManager/group?uid='.$vo['uid'])}"  class="authorize addgroup">{:L('_ACCREDIT_')}</a>
+                           <a href="{:U('User/changeStatus?method=deleteUser&id='.$vo['uid'])}"
+                              class="confirm ajax-get">{:L('_DELETE_')}</a>
+                           <a href="{:U('User/initPass?id='.$vo['uid'])}"
+                              class="confirm ajax-get">{:L('_PW_RESET_')}</a>
+                       </td>
+
+
+
+                       <td class="col-md-1">{$vo.login}</td>
+                       <td class="col-md-1"><span>{$vo.last_login_time|time_format}</span></td>
+                       
+                       <td class="col-md-1">
+                       	<if condition="$vo['status'] eq -1">删除
+                       	<elseif condition="$vo['status'] eq 0"/>禁用
+                       	<else /> 启用
+                       	</if>
+                       </td>
+
+
+
+                   </tr>
+               </volist>
+               <else/>
+               <td colspan="9" class="text-center">{:L('该用户组无人员信息')}</td>
+           </notempty>
+           </tbody>
+       </table>
+    
+   </div>
+   <div class="with-padding">
+         {$_page}
+  </div>
+  </block>
+  <block name="script">
+  <!-- <script type="text/javascript" src="__PUBLIC__/js/jquery-2.0.3.min.js"></script> -->
+  <!-- <script type="text/javascript" src="__JS__/jquery.mousewheel.js"></script> -->
+  
+
+<!--zui-->
+<!-- <script type="text/javascript" src="__JS__/common.js"></script> -->
+<!-- <script type="text/javascript" src="__JS__/com/com.toast.class.js"></script> -->
+<!-- <script type="text/javascript" src="__ZUI__/js/zui.js"></script> -->
+<!-- <script type="text/javascript" src="__ZUI__/lib/migrate/migrate1.2.js"></script> -->
+<!--zui end-->
+
+<!-- <script type="text/javascript" src="__JS__/kanban/kanban.js"></script> -->
+
+<!-- <script src="__ZUI__/lib/chosen/chosen.js"></script> -->
+
+  
+  <script type="text/javascript">
+  //搜索功能
+  $("#search").click(function () {
+	  //var test = window.location.href;
+	 // alert(test);
+      var url = window.location.href;
+      var query = $('.search-form').find('input').serialize();
+      query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g, '');
+      query = query.replace(/^&/g, '');
+      if (url.indexOf('?') > 0) {
+          url += '&' + query;
+      } else {
+          url += '?' + query;
+      }
+      console.log(url);
+      window.location.href = url;
+  });
+  //回车搜索
+  $(".search-input").keyup(function (e) {
+      if (e.keyCode === 13) {
+          $("#search").click();
+          return false;
+      }
+  });
+  $(".addgroup").click(function(){
+	  parent.location.href=$(this).attr("src");
+  });
+  $(".addPass").click(function(){
+	  parent.location.href=$(this).attr("src");
+  });
+  function changeuser(type){
+	  //获取已选择的用户
+	  var chk_value =[]; 
+	  $('input[name="id[]"]:checked').each(function(){ 
+	  	chk_value.push($(this).val()); 
+	  }); 
+	  //alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value); 
+	
+	  window.location.href ="/index.php?s=/admin/user/changestatus/method/"+type+"/id/"+chk_value;
+  }
+  function adduser(){
+	  //var _parent = indow.parent; //获得父页面的对象
+	 
+	  parent.location.href="/index.php?s=/admin/user/addPass/id/0.html";
+	  
+  }
+  function addgroup(){
+
+	 
+  }
+  </script>
+  </block>

@@ -1,0 +1,87 @@
+
+<link href="__PUBLIC__/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+.limitheght{
+		height:500px;
+		
+	}
+    </style>
+    <script src="__PUBLIC__/assets/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__/assets/pages/scripts/ui-tree.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="__JS__/common.js"></script>
+    <form class="form-horizontal limitheght" action="{:U('addToGroup')}" method="post" enctype="application/x-www-form-urlencoded" >			
+			<div class="col-md-12">
+	             <div class="portlet light bordered " style="height:430px;overflow:scroll;">
+	                 
+	                 <div class="portlet-body">
+	                     <div id="tree_1" class="tree-demo">
+	                         <ul>
+	                             
+	                             <php>$nodehtml;nodeList($proList,$nodehtml);echo $nodehtml;</php>
+	                         </ul>
+	                     </div>
+	                 </div>
+	             </div>
+	             <input type="hidden" name="wid" id="wid" value="">
+	            <input type="hidden" name="batch" value="true">
+	            <div style="margin-top: 10px;">
+	                <a class="btn btn-primary" onclick="oncheck()">确定</a>
+            		<a onclick="$('.close').click();" class="btn btn-default">{:L("_CANCEL_")}</a>
+	            </div>
+	             
+	        </div>
+            
+        </form>
+
+
+<script type="text/javascript">
+    
+	$('#tree_1').jstree().close_all ();
+	function mynode(id){   	
+        $('#wid').val(id);
+    }
+	
+	function nonode(id){   	
+        $('#wid').val(0);
+    }
+	
+	function oncheck(){
+		var wid=$('#wid').val();
+		var href=document.location.href;
+		if(0==wid){
+			alert('请先选择项目！');
+		}else{
+            var stage=getQueryString('stage');//先查看是否已存在stage参数
+            if(stage!=null){
+                href=replaceParamVal('stage',0);
+            }
+			var ownid=getQueryString('ownid');//先查看是否已存在owdid参数
+			if(ownid!=null){
+				href=replaceParamVal('ownid',wid,href);
+			}else{
+				href=href+"&ownid="+wid;
+			}
+			window.location.href=href;
+			
+			//alert(href);alert(ownid);
+		}
+	}
+	function replaceParamVal(paramName,replaceWith,href) {
+	    var oUrl = document.location.href.toString();
+	    if(href){
+            oUrl=href;
+		}
+	    var re=eval('/('+ paramName+'=)([^&]*)/gi');  
+	   // alert(re);
+	    var nUrl = oUrl.replace(re,paramName+'='+replaceWith);
+        // alert(nUrl);
+	    return nUrl;
+	}  
+	function getQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return unescape(r[2]); return null;
+	} 
+</script>
+

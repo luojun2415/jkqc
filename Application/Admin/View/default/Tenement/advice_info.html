@@ -1,0 +1,151 @@
+<extend name="Public/base"/>
+<block name="style">
+<style>
+.main-title h2 {
+	font-size: 14px;
+}
+
+.invoice-head{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+	font-weight: bold;
+}
+.invoice-heads{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-headss{
+	height:200px;
+	line-height:200px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-heads .col-xs-7{
+	padding: 0px;
+}
+.invoice-heads .col-xs-5{
+	padding: 0px;
+}
+.invoice-heads .col-xs-3{
+	padding: 0px;
+}
+.invoice-heads .col-xs-9{
+	padding: 0px;
+}
+.invoice-heads .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.invoice-headss .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.col-xs-12{
+	padding:0px;
+}
+</style>
+</block>
+<block name="body">
+    <div class="main-title" style="margin-bottom:10px;">
+        <h2>用户反馈信息</h2>
+    </div>
+	<div style="padding:0 30px;">
+	<div class="col-xs-12 invoice-content-2 bordered" style="border-top:1px solid #C6C6C6;">
+    	<div class="invoice-head">
+	        <div class="col-xs-12">
+	       		项目:{$info.project}
+	        </div>
+		</div>
+		<div class="col-xs-12 invoice-heads">
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right:none;">提交人</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:35%;border-left: 1px solid #C6C6C6;border-right: 1px solid #C6C6C6;">{$info.username}</div>
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">提交时间</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:35%;">{$info.time}</div>
+		</div>
+        <div class="col-xs-12 invoice-heads" style="height:auto;">   
+			<div class="invoice-title uppercase" style="width:15%;height:auto;float:left;border-right: none;">问题类型</div>
+            <div class="invoice-desc inv-address" style="float:left;width:85%;border-left: 1px solid #C6C6C6;">{$info.type}</div>
+		</div>   
+        <div class="col-xs-12 invoice-heads" style="height:auto;">   
+			<div class="invoice-title uppercase" style="width:15%;height:auto;float:left;border-right: none;">反馈内容</div>
+            <div class="invoice-desc inv-address" style="float:left;width:85%;border-left: 1px solid #C6C6C6;">{$info.content}</div>
+		</div>
+		
+ 
+		<notempty name="data.problm_board">
+		 	<volist name="data.problm_board" id="vo">
+				<div class="col-xs-12 invoice-heads" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">����ظ���</div>
+		            <div class="invoice-desc inv-address" style="width:45%;float:left;border-right: 1px solid #C6C6C6;">{$vo.username}</div>
+		            <div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">��������</div>
+		      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$vo.department}</div>
+				</div>
+				<div class="col-xs-12 invoice-headss" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">�ظ�ͼƬ</div>
+		             <div class="invoice-desc inv-address" style="width:85%;float:left;">
+			            <volist name="vo.imgpath" id="path">            	
+			      			<notempty name="path">
+			      				<div class="each"><a href="{$path}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+	  								<img src="{$path}" style="width:100px;"></a>
+  								</div>
+			      			</notempty>
+			      		</volist>
+		            </div>
+				</div> 
+				<div class="col-xs-12 invoice-heads" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">�ظ�����</div>
+		            <div class="invoice-desc inv-address" style="width:85%;float:left;">{$vo.content}</div>
+				</div>
+			</volist>
+		</notempty>
+       </div>
+       </div>
+</block>
+
+<block name="script">
+<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('.popup-gallery').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a',
+                    type: 'image',
+                    tLoading: '�������� #%curr%...',
+                    mainClass: 'mfp-img-mobile',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                    },
+                    image: {
+                        tError: '<a href="%url%">ͼƬ #%curr%</a> �޷�������.',
+                        titleSrc: function (item) {
+                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                            return '';
+                        },
+                        verticalFit: true
+                    }
+                });
+            });
+                    });
+    </script>
+</block>

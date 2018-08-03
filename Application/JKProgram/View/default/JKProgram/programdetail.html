@@ -1,0 +1,278 @@
+<extend name="Public/base"/>
+<block name="style">
+<style>
+.main-title h2 {
+	font-size: 14px;
+}
+
+.invoice-head{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+	font-weight: bold;
+}
+.invoice-heads{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-headss{
+	height:200px;
+	line-height:200px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-heads .col-xs-7{
+	padding: 0px;
+}
+.invoice-heads .col-xs-5{
+	padding: 0px;
+}
+.invoice-heads .col-xs-3{
+	padding: 0px;
+}
+.invoice-heads .col-xs-9{
+	padding: 0px;
+}
+.invoice-heads .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.invoice-headss .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.col-xs-12{
+	padding:0px;
+}
+</style>
+</block>
+<block name="body">
+    <div class="main-title">
+        <h2>项目问题统计</h2>
+    </div>
+	<div style="padding:0 30px;">
+	<div class="col-xs-12 invoice-content-2 bordered" style="border-top:1px solid #C6C6C6;">
+    	<div class="invoice-head">
+	        <div class="col-xs-12">
+	       		 项目：{$data['ownid']}
+	            <!-- <div >                  
+	                <h3 class="uppercase">项目：{$data['ownid']}</h3>
+	            </div> -->
+	        </div>
+              <!--  <div class="col-xs-3">
+               <br>
+                   <span class=""> 问题提交人:{$data['authid']}</span>
+               </div> -->
+		</div>
+		<div class="col-xs-12 invoice-heads">
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">问题位置</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:45%;border-right: 1px solid #C6C6C6;">{$data['project_ids']}</div>
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">轴线</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$data['axis']}</div>
+		</div>
+           
+        <div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">问题选项</div>
+            
+            <if condition = "$data['limit_time']">
+            	<div class="invoice-desc inv-address" style="width:45%;float:left;border-right: 1px solid #C6C6C6;">{$data['option_id']}</div>
+	            <div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">整改期限</div>
+	      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$data['limit_time']}天</div>
+      		<else/><div class="invoice-desc inv-address" style="width:45%;float:left;">{$data['option_id']}</div>
+      		</if>
+      		
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">施工单位</div>
+            <div class="invoice-desc inv-address" style="width:85%;float:left;">{$data['target_id']}</div>
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">问题描述</div>
+            <div class="invoice-desc inv-address" style="width:85%;float:left;">{$data['info']}</div>
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">发布时间</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:45%;border-right: 1px solid #C6C6C6;">{$data['create_time']}</div>
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">最近更新时间</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$data['update_time']}</div>
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">问题提交人</div>
+            <div class="invoice-desc inv-address" style="width:45%;float:left;border-right: 1px solid #C6C6C6;">{$data['authid']}</div>
+            <div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">所属部门</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$data['department']}</div>
+            
+		</div>
+		<div class="col-xs-12 invoice-headss" style="">   
+	       <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">问题图片</div>
+	       <div class="invoice-desc inv-address popup-gallery" style="width:85%;float:left;">
+	      		<volist name="data.imgpath" id="path">
+	      			<notempty name="path">
+	      			<div class="each" style="float:left;padding-right:10px;"><a href="{$path}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+	      			<img src="{$path}" style="width:100px;"></a>
+	      			</div>	
+	      			</notempty>
+	      		</volist>	
+	        </div>
+		</div>  
+		<notempty name="data.problm_board">
+		 	<volist name="data.problm_board" id="vo">
+				<div class="col-xs-12 invoice-heads" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">问题回复人</div>
+		            <div class="invoice-desc inv-address" style="width:45%;float:left;border-right: 1px solid #C6C6C6;">{$vo.username}（{$vo.create_time}）</div>
+		            <div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">所属部门</div>
+		      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$vo.department}</div>
+				</div>
+				<div class="col-xs-12 invoice-headss" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">回复图片</div>
+		             <div class="invoice-desc inv-address popup-gallery" style="width:85%;float:left;">
+			            <volist name="vo.imgpath" id="path">            	
+			      			<notempty name="path">
+			      				<div class="each"  style="float:left;padding-right:10px;"><a href="{$path}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+	  								<img src="{$path}" style="width:100px;"></a>
+  								</div>
+			      			</notempty>
+			      		</volist>
+		            </div>
+				</div> 
+				<div class="col-xs-12 invoice-heads" style="">   
+					<div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">回复内容</div>
+		            <div class="invoice-desc inv-address" style="width:85%;float:left;">{$vo.content}</div>
+				</div>
+			</volist>
+		</notempty>
+          <!--  <div class="row invoice-cust-add">
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">施工单位</span>
+                   <p class="invoice-desc">{$data['target_id']}</p>
+               </div>
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">发布日期</span>
+                   <p class="invoice-desc">{$data['create_time']}</p>
+               </div>
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">最近更新</span>
+                   <p class="invoice-desc">{$data['update_time']}</p>
+               </div>
+              
+           </div> -->
+           <!--  <div class="row invoice-subtotal">
+           		<div class="col-xs-6">
+                   <span class="invoice-title uppercase">整改状态：{$data['status']}</span>
+               </div>
+           	   <div class="col-xs-6">
+                   <span class="invoice-title uppercase">问题选项：{$data['option_id']}</span>
+               </div> -->
+               
+              <!--  <div class="col-xs-2">
+                   <span class="invoice-title uppercase">问题描述：</span>
+               </div>
+               <div class="col-xs-12">
+                   <span class="invoice-title uppercase">{$data['info']}</span>
+               </div> -->
+               <!-- <div class="col-xs-2">
+                   <span class="invoice-title uppercase">问题图片：</span>
+               </div>
+               <div class="col-xs-12 popup-gallery">
+               		<volist name="data.imgpath" id="path">
+               			<notempty name="path">
+               			<div class="each"><a href="{$path}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+               			<img src="{$path}" style="width:100px;"></a>
+               				
+               			</notempty>
+               		</volist>
+               		
+               </div>
+           </div>-->
+         <!--   <div class="row invoice-body">
+           		<notempty name="data.problm_board"><div class="col-xs-12 table-responsive">
+                   <table class="table table-bordered ">
+                       <thead>
+                           <tr>
+                               <th >回复人</th>
+                               <th >回复内容</th>
+                               <th >回复时间</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                       <volist name="data.problm_board" id="vo">
+                       		<tr>
+                               <td>{$vo.username}</td>
+                               <td class="popup-gallery">
+	                               <volist name="vo.imgpath" id="path">
+				               			<notempty name="path">
+				               				<div class="each"><a href="{$path}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+               								<img src="{$path}" style="width:100px;"></a>
+				               			</notempty>
+				               		</volist>
+		               				<sapn>{$vo.content}</sapn>
+		               			</td>
+		               			<td>{$vo.create_time}</td>
+                           </tr>
+                       </volist>
+                           
+                       </tbody>
+                   </table>
+               </div></notempty>
+               
+           </div> -->
+           
+           <!-- <div class="row">
+               <div class="col-xs-12">
+                   <a class="btn btn-lg green-haze hidden-print uppercase print-btn" onclick="javascript:window.print();">Print</a>
+               </div>
+           </div> -->
+       </div>
+       </div>
+</block>
+
+<block name="script">
+<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('.popup-gallery').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a',
+                    type: 'image',
+                    tLoading: '正在载入 #%curr%...',
+                    mainClass: 'mfp-img-mobile',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                    },
+                    image: {
+                        tError: '<a href="%url%">图片 #%curr%</a> 无法被载入.',
+                        titleSrc: function (item) {
+                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                            return '';
+                        },
+                        verticalFit: true
+                    }
+                });
+            });
+                    });
+    </script>
+</block>

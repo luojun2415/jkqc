@@ -1,0 +1,130 @@
+<extend name="Public/base"/>
+
+<block name="body">
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/js/ext/webuploader/js/webuploader.js"></script>
+<link href="__PUBLIC__/js/ext/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+    <div class="main-title">
+        <h2>{:isset($info['id'])?L('_EDIT_WITH_SINGLE_'):L('_NEW_WITH_SINGLE_')}{:L("店面位置")}</h2>
+    </div>
+    <form action="{:U()}" method="post" class="form-horizontal">
+        <div class="with-padding">
+            <div class="form-item">
+                <label class="item-label">{:L("店面名称")}</label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-input-width form-control" name="name" value="{$info.name|default=''}">
+                </div>
+            </div>
+            <div class="form-item">
+                <label class="item-label">{:L("联系电话")}</label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-input-width form-control" name="tel" value="{$info.name|default=''}">
+                </div>
+            </div>
+            <div class="form-item">
+                <label class="item-label">{:L("店面简介")}</label>
+                <div class="controls">
+                    <input type="text" class="text input-large form-input-width form-control" name="description" value="{$info.name|default=''}">
+                </div>
+            </div>
+            
+		<div class="form-item">
+		
+			<label class="item-label">{:L("店面封面图")}</label>
+			<div class="controls">
+				<div id="upload_single_image_code" style="padding-bottom: 5px;">{:L("_SELECT_PICTURES_")}</div>
+				<input class="attach" type="hidden" name="code" value="{$info.code}" />
+				<div class="upload-img-box">
+					<div class="upload-pre-item popup-gallery">
+
+						<notempty name="info.code">
+						<div class="each">
+							<a href="{$info.code|get_cover='path'}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+								<img src="{$info.code|get_cover='path'}">
+							</a>
+							<div class="text-center opacity del_btn"></div>
+							<div onclick="admin_image.removeImage($(this),'{$info.code}')"
+								class="text-center del_btn">{:L("_DELETE_")}</div>
+						</div>
+						</notempty>
+					</div>
+				</div>
+			</div>
+			<script>
+            $(function () {
+                var uploader_code= WebUploader.create({
+                    // 选完文件后，是否自动上传。
+                    auto: true,
+                    // swf文件路径
+                    swf: 'Uploader.swf',
+                    // 文件接收服务端。
+                    server: "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                    // 选择文件的按钮。可选。
+                    // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                    pick: '#upload_single_image_code',
+                    // 只允许选择图片文件
+                    accept: {
+                        title: 'Images',
+                        extensions: 'gif,jpg,jpeg,bmp,png',
+                        mimeTypes: 'image/*'
+                    }
+                });
+                uploader_code.on('fileQueued', function (file) {
+                    uploader_code.upload();
+                });
+                /*上传成功**/
+                uploader_code.on('uploadSuccess', function (file, data) {
+                    if (data.status) {
+                        $("[name='code']").val(data.id);
+                        $("[name='code']").parent().find('.upload-pre-item').html(
+                                ' <div class="each"><a href="'+ data.path+'" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                        '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:L("_DELETE_")}</div></div>'
+                        );
+                        uploader_code.reset();
+                    } else {
+                        updateAlert(data.info);
+                        setTimeout(function () {
+                            $('#top-alert').find('button').click();
+                            $(that).removeClass('disabled').prop('disabled', false);
+                        }, 1500);
+                    }
+                });
+            })
+        </script>
+		</div>
+		<div class="form-item">
+		
+                <label class="item-label">{:L("店面位置")}</label>
+                <div class="controls">
+                    <input type="text" class="text input-small form-input-width form-control" name="address" value="{$info.address|default=''}">
+                </div>
+            </div>
+            <div class="form-item">
+            	<label class="item-label">{:L("店面坐标定位")}</label>
+                <div class="controls">
+                    <input type="hidden" name="lon" id="lon" value="{$info.lon|default=0}">
+                	<input type="hidden" name="lat" id="lat" value="{$info.lat|default=0}">
+                	<iframe src="/Application/Shop/View/default/Shop/mapapi.html" width=600 height="400" frameborder="0" scrolling="no"></iframe>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="form-item with-padding">
+            <input type="hidden" name="id" value="{$info.id|default=''}">
+            <button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">{:L("_SURE_WITH_SPACE_")}</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</button>
+        </div>
+    </form>
+</block>
+
+<block name="script">
+    <script type="text/javascript">
+        Think.setValue("pid", {$info.pid|default=0});
+
+        Think.setValue("hide", {$info.hide|default=0});
+        Think.setValue("is_dev", {$info.is_dev|default=0});
+        //导航高亮
+        highlight_subnav('{:U('Shop/hotelEdit')}');
+        Think.setValue("module", '{$info.module|default=''}');
+    </script>
+</block>

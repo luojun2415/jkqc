@@ -1,0 +1,159 @@
+<extend name="Public/base" />
+<block name="style">
+<link href="__PUBLIC__/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+</block>
+<block name="body">
+<style>
+.zzjg{
+	position: relative;
+	min-height: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	float: left;
+	width: 26%;
+	
+	overflow:scroll;
+}
+.qxgl{
+	position: relative;
+	min-height: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	float: left;
+	width: 70%;
+	
+	overflow:scroll;
+}
+.row{
+	height:700px;
+
+}
+</style>
+<div class="row">
+   	<div class="">
+            <div class="portlet light bordered zzjg">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="icon-social-dribbble font-blue-sharp"></i>
+                        <span class="caption-subject font-blue-sharp bold uppercase">组织架构</span>
+                    </div>
+                    
+                </div>
+                <div class="portlet-body">
+                    <div id="tree_1" class="tree-demo hidden">
+                        <ul>
+                           
+                            <php>$nodehtml;nodeList($nodeList,$nodehtml);echo $nodehtml;</php>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+    </div>
+    <div class="qxgl " >
+		<!-- 标题栏 -->
+	
+		<!-- <div class="main-title">
+			<h2>{:L('用户组管理')}</h2>
+		</div>
+	
+	    <div class="tools auth-botton with-padding">
+	        <a id="add-group" class="btn" href="{:U('createGroup')}">{:L('_ADD_WITH_SPACE_')}</a>
+	        <a class="btn" href="{:U('createOtherGroup')}">{:L('新增供应商')}</a>
+	        <a url="{:U('changestatus',array('method'=>'resumeGroup'))}" class="btn ajax-post" target-form="ids" >{:L('_ENABLE_WITH_SPACE_')}</a>
+	        <a url="{:U('changestatus',array('method'=>'forbidGroup'))}" class="btn ajax-post" target-form="ids" >{:L('_DISABLE_WITH_SPACE_')}</a>
+	        <a  url="{:U('changestatus',array('method'=>'deleteGroup'))}" class="btn ajax-post confirm btn-danger" target-form="ids" >{:L('_DELETE_WITH_SPACE_')}</a>
+	        &nbsp; &nbsp; &nbsp; &nbsp;
+	        <a class="btn" href="{:U('Admin/menu/index')}">{:L('_MENU_BG_MANAGER_')}</a>
+	        <a class="btn btn-success" href="{:U('Admin/menu/add')}">{:L('_MENU_NEW_')}</a>
+	        <a class="btn" href="{:U('addNode')}">{:L('_AUTH_FG_NEW_')}</a>
+	    </div> -->
+	    
+		<!-- 数据列表 -->
+		<div class="" id="userfrm">
+		 <iframe src="/index.php?s=/admin/AuthManager/grouplist"  id="frm1" name="frm1" style="width:100%;height:100%;" frameborder="0">
+		  </iframe>
+		<!-- <table class="table table-bordered table-striped ">
+	    <thead>
+	        <tr>
+			<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+			<th class="">{:L('_USER_GROUP_')}</th>
+			<th class="">{:L('简称')}</th>
+	
+			<th class="">{:L('_STATUS_')}</th>
+			<th class="">{:L('_OPERATE_')}</th>
+			</tr>
+	    </thead>
+	    <tbody>
+			<notempty name="_list">
+			<volist name="_list" id="vo">
+			<tr>
+	            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}" /></td>
+	            
+				<empty name="vo.gysCode"><td><a href="{:U('AuthManager/editgroup?id='.$vo['id'])}">{$vo.title}</a> </td>
+				<else /> <td><a href="{:U('AuthManager/createOthergroup?id='.$vo['id'])}">{$vo.title}</a> </td></empty>
+				<td><span>{$vo.short_title}</span></td>
+	
+	
+				<td><a class=" btn btn-danger btn-xs" href="{:U('AuthManager/access?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >{:L('_AUTH_BG_MANAGER_')}</a>
+	                 <a class=" btn btn-success btn-xs" href="{:U('AuthManager/accessuser?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >{:L('_AUTH_FG_MANAGER_')}</a>
+				<a class=" btn btn-warning btn-xs" href="{:U('AuthManager/user?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >{:L('_MEMBER_AUTH_')}</a>
+				</td>
+				<td>
+					<if condition="$vo['status'] eq -1">
+						删除
+					<elseif condition="$vo['status'] eq 0"/>禁用
+					<else />正常 </if>
+				</td>
+				<td><eq name="vo.status" value="1">
+					<a url="{:U('AuthManager/changeStatus?method=forbidGroup&id='.$vo['id'])}" class="ajax-get">{:L('_DISABLE_')}</a>
+					<else/>
+					<a url="{:U('AuthManager/changeStatus?method=resumeGroup&id='.$vo['id'])}" class="ajax-get">{:L('_ENABLE_')}</a>
+					</eq>
+	修改内容开始
+					<a url="{:U('AuthManager/changeStatus?method=deleteGroup&id='.$vo['id'])}" class="confirm ajax-get">{:L('_DELETE_')}</a>
+	修改内容结束
+	                </td>
+			</tr>
+			</volist>
+			<else/>
+			<td colspan="6" class="text-center"> {:L('_ADMIN_USER_EMPTY_')} </td>
+			</notempty>
+		</tbody>
+	    </table>
+	
+		</div>
+	    <div class="with-padding">
+	        {$_page}
+	    </div> -->
+	</div>
+</div>
+</block>
+
+<block name="script">
+<script src="__PUBLIC__/assets/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__/assets/pages/scripts/ui-tree.min.js" type="text/javascript"></script>
+  <script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+<script type="text/javascript" charset="utf-8">
+var $window = $(window);
+
+$(".zzjg").css("height", $window.height() - 100);
+$("#userfrm").css("height",$window.height()-100);
+
+function mynode(id){
+	
+   /*  $.get("/index.php?s=/admin/auth_manager/index/id/"+id,function(msg){
+        $('#userList').empty();
+        $('#userList').html(msg);
+    }) */
+	$("#frm1").attr('src',  "/index.php?s=/admin/AuthManager/grouplist/id/"+id);
+}
+
+    //导航高亮
+    highlight_subnav('{:U('AuthManager/index')}');
+    window.onload=function(){ 
+    	$('#tree_1').removeClass("hidden");
+    }
+    
+</script>
+</block>

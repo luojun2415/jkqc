@@ -1,0 +1,148 @@
+<extend name="Public/base"/>
+<block name="style">
+<style>
+#zhezhao{
+	 width:100%;
+	 height:100%;
+	 background:#f00;
+	 filter:alpha(opacity:0);
+	 opacity:0;
+	 z-index:9999;
+	 position:absolute;
+	 top:0;
+	 left:0;
+	 display:none;
+}
+#div2{
+	 
+	 padding:0;
+	 position:relative;
+}
+
+#div2 a{
+	 width:200px;
+	 height:40px;
+}
+</style>
+</block>
+<block name="body">
+<div id="zhezhao" style="display: none;"></div>
+    <div class="main-title">
+        <h2>楼栋列表</h2>
+        <div id="div2" class="with-padding">
+            <a id="a1" href="/index.php?s=/admin/j_k_program/addMore.html" class="btn btn-ajax btn-success btn">
+            	快速新建楼栋</a>
+        </div>
+    </div>
+
+    <div id="data-table" class="data-table with-padding">
+    	<table class="table table-bordered table-striped ">
+	    <thead>
+	        <tr>
+			<th class="">'楼栋名称'</th>
+			<th class="">{:L('_OPERATE_')}</th>
+			</tr>
+	    </thead>
+	    <tbody>
+	    	<notempty name="floordata">
+			<volist name="floordata" id="vo">
+			<tr>
+	            
+				<td><a href="{:U('JKProgram/selectfloor?', array('id' => $vo['id'],'name' => $vo['title']))}">{$vo.title}</a> </td>
+				
+				<td>
+					<a class="btn btn-success" href="{:U('JKProgram/add', array('id' => $vo['id']))}"></a>
+					<a class="btn btn-danger confirm ajax-get" href="{:U('JKProgram/setStatus?', array('ids' => $vo['id'],'status' => -1))}" >删除</a>
+	            
+	                </td>
+			</tr>
+			</volist>
+	    </tbody>
+	    </table>
+        
+    </div>
+	<!-- 分页 -->
+	<div class="with-padding">{$_page}</div>
+	<!-- /分页-->
+</block>
+
+<block name="script">
+<script type="text/javascript">
+window.onload=function()
+{
+	
+ var oDiv2=document.getElementById("div2");
+ var h2=document.getElementById("a1");
+ var mouseStart={};
+ var divStart={};
+ var rightStart={};
+ var bottomStart={};
+
+ var initX=oDiv2.offsetLeft;
+ var initY=oDiv2.offsetTop;
+ 
+ //h2完美拖拽
+ h2.onmousedown=function(ev)
+ {
+  var oEvent=ev||event;
+  mouseStart.x=oEvent.clientX+initX;
+  mouseStart.y=oEvent.clientY+initY;
+  divStart.x=oDiv2.offsetLeft;
+  divStart.y=oDiv2.offsetTop;
+  
+  if(h2.setCapture)
+  {
+   h2.onmousemove=doDrag3;
+   h2.onmouseup=stopDrag3;
+   h2.setCapture();
+  }
+  else
+  {
+   document.addEventListener("mousemove",doDrag3,true);
+   document.addEventListener("mouseup",stopDrag3,true);
+  }
+  
+  zhezhao.style.display='block';
+ };
+ function doDrag3(ev)
+ {
+  var oEvent=ev||event;
+  var l=oEvent.clientX-mouseStart.x+divStart.x;
+  var t=oEvent.clientY-mouseStart.y+divStart.y;
+  if(l<0)
+  {
+   l=0;
+  }
+  else if(l>document.documentElement.clientWidth-oDiv2.offsetWidth)
+  {
+   l=document.documentElement.clientWidth-oDiv2.offsetWidth;
+  }
+  if(t<0)
+  {
+   t=0;
+  }
+  else if(t>document.documentElement.clientHeight-oDiv2.offsetHeight)
+  {
+   t=document.documentElement.clientHeight-oDiv2.offsetHeight;
+  }
+  oDiv2.style.left=l+"px";
+  oDiv2.style.top=t+"px";
+ };
+ function stopDrag3()
+ {
+  if(h2.releaseCapture)
+  {
+   h2.onmousemove=null;
+   h2.onmouseup=null;
+   h2.releaseCapture();
+  }
+  else
+  {
+   document.removeEventListener("mousemove",doDrag3,true);
+   document.removeEventListener("mouseup",stopDrag3,true);
+  }
+  zhezhao.style.display='none';
+ }
+};
+</script>
+</block>

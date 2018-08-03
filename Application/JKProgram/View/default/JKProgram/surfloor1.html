@@ -1,0 +1,220 @@
+<extend name="Public/base"/>
+<block name="style">
+<link href="__PUBLIC__/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/js/ext/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+</block>
+<block name="body">
+    <!-- 标题栏 -->
+    <div class="row">
+    	<div class="col-md-6">
+             <div class="portlet light bordered">
+                 <div class="portlet-title">
+                     <div class="caption">
+                         <i class="icon-social-dribbble font-blue-sharp"></i>
+                         <span class="caption-subject font-blue-sharp bold uppercase">选择实测选项</span>
+                     </div>
+                     
+                 </div>
+                 <div class="portlet-body">
+                     <div id="tree_1" class="tree-demo">
+                         <ul>
+                             
+                             <php>$nodehtml;nodeList($nodeList,$nodehtml);echo $nodehtml;</php>
+                         </ul>
+                     </div>
+                 </div>
+             </div>
+             
+        </div>
+        <div class="col-md-6" id="userList">
+		    <div class="main-title">
+		        <h2>{:L('实测实量图信息')}</h2>
+		    </div>
+		    <div class="clearfix">
+		        <button class="btn btn-return" style="float:right;" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</button>
+		    </div>
+		    <form action="" enctype="application/x-www-form-urlencoded" method="POST" class="ids form-horizontal">
+            
+            <label class="item-label">操作位置    </label>
+			<div class="controls ">
+			<input type="text" readonly name="ids" value="" id="measureimgs" class=" text input-large form-control form-input-width">
+			</div>
+			
+			<label class="item-label">实测图    </label>
+			<div class="controls ">
+				<div id="upload_single_image_mapid" style="padding-bottom: 5px;">{:L("_SELECT_PICTURES_")}</div>
+				<input class="attach" type="hidden" name="mapid" id="mapid" value="{$mapid}" />
+				<div class="upload-img-box">
+					<div class="upload-pre-item popup-gallery">
+
+						<notempty name="mapid">
+						<div class="each">
+							<a href="{$mapid|get_cover='path'}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+								<img src="{$mapid|get_cover='path'}">
+							</a>
+							<div class="text-center opacity del_btn"></div>
+							<div onclick="admin_image.removeImage($(this),'{$mapid}')"
+								class="text-center del_btn">{:L("_DELETE_")}</div>
+						</div>
+						</notempty>
+					</div>
+				</div>
+			</div>
+			          
+            <label class="item-label"></label>
+            <div class="form-item">
+                <input type="hidden" id="oid" name="oid" value="{$oid}" />
+                <a class="btn ajax-post btn-success no-refresh" url="{:U('JKProgram/saveflooroption1')}" target-form="ids">{:L('保存')}
+            	</a>
+            </div>
+        </form>
+	        <div class="with-padding" style="overflow:scroll;height:800px;">
+	    	<form id="a_form" action="{:U('JKProgram/editfloor')}" style="overflow-x:auto;" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal">
+	 			<volist name="arr_floor" key="k" id="vo">
+	 			<span style="font-size: 16px;font-weight: bold;">{$vo.title}</span><br />
+				<table border="1" style="text-align:center;margin-bottom:20px;">
+			
+	                <tr class="clearfix">
+						<td class="clearfix">
+	               		<input id="myd_{$k}" class="myd ids row-selected" type="checkbox" >全选
+	               		
+	          			</td>
+	              
+	               		<volist name="vo['_'][0]['_']" key="j" id="finit">
+	                		<td>
+	    						<input id="myd_{$k}_c_{$j}" class=" myc ids row-selected" 
+	    						type="checkbox"  value="">		
+	       					</td>
+	               		</volist>
+	                </tr>
+	           		
+	           		<volist name="vo._" id="ch">
+	           		<tr>
+	           			<td></td>
+	        			<td class="clearfix popup-gallery">
+	         			<input class="myd_{$k} myr_{$k} ids row-selected"  
+	         			type="checkbox" name="id[]" value="{$ch.id}">
+	         			<notempty name="ch.imgpath">	
+	         				<a href="{$ch.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+							<span style="color:red">{$ch.title}</span>	
+							</a>
+						<else/>
+							{$ch.title}	
+						</notempty> 
+	        			</td>
+						<volist name="ch._" key="j" id="sh">
+						<td class="popup-gallery" style="width: 80px;margin-bottom:0px;">
+							<input class="myd_{$k} myd_{$k}_c_{$j} ids row-selected" type="checkbox" name="id[]" value="{$sh.id}">
+							<notempty name="sh.imgpath">	
+								<a href="{$sh.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+								<span style="color:red">{$sh.title}</span>	
+								</a>
+							<else/>
+								{$sh.title}	
+							</notempty> 
+						</td>
+						</volist>
+					</tr> 
+	           		</volist>
+	              
+	                
+				  </table>
+	            </volist>
+	            <div>提示：已有平面图的楼层字体为红色,已有测量图的字体为蓝色，点击可查看平面图或测量图，尚未配置楼层平面图的楼层字体为黑色</div>
+	        </form>
+	    </div>
+	    </div>
+	</div>
+</block>
+
+<block name="script">
+	<script src="__PUBLIC__/assets/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+	<script src="__PUBLIC__/assets/pages/scripts/ui-tree.min.js" type="text/javascript"></script>
+    <script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+	<script type="text/javascript" charset="utf-8" src="__PUBLIC__/js/ext/webuploader/js/webuploader.js"></script>
+	
+    <script type="text/javascript">
+   
+        
+        //导航高亮
+        highlight_subnav("{:U('User/index')}");
+    </script>
+    <script>
+    var mydata='';
+    
+    var uploader_code= WebUploader.create({
+        // 选完文件后，是否自动上传。
+        auto: true,
+        // swf文件路径
+        swf: 'Uploader.swf',
+        // 文件接收服务端。
+        server: "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#upload_single_image_mapid',
+        // 只允许选择图片文件
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+    });
+    uploader_code.on('fileQueued', function (file) {
+        uploader_code.upload();
+    });
+    /*上传成功**/
+    uploader_code.on('uploadSuccess', function (file, data) {
+   	 mydata=data;
+        if (data.status) {
+            $("[name='mapid']").val(data.id);
+            $("[name='mapid']").parent().find('.upload-pre-item').html(
+                    ' <div class="each"><a href="'+ data.path+'" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                            '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:L("_DELETE_")}</div></div>'
+            );
+            uploader_code.reset();
+           
+        } else {
+            updateAlert(data.info);
+            setTimeout(function () {
+                $('#top-alert').find('button').click();
+                $(that).removeClass('disabled').prop('disabled', false);
+            }, 1500);
+        }
+    });
+
+ 	function mynode(id){
+    	$('#oid').val(id);
+    	$("#mapid").val("");//设置检查图纸url为空
+    	$("#measureimgs").val("");	//设置操作值为空   
+    	data=mydata;
+    	$("[name='code']").val(data.id);
+    	if(data.path){
+    		$("[name='code']").parent().find('.upload-pre-item').html(
+                   ' <div class="each"><a href="'+ data.path+'" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                           '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:L("_DELETE_")}</div></div>'
+           );
+    	}        
+        uploader_code.reset();
+        $.get("/index.php?s=/admin/j_k_program/surfloor1/measureid/"+id,function(msg){
+            $('.with-padding').empty();
+           // alert(msg);
+            $('.with-padding').html(msg);
+        })
+    }
+
+ 	
+   	</script> 
+   	<script>         	
+        $("#measureimgs").val("");	//设置操作值为空   
+        $("#mapid").val("");//设置检查图纸url为空
+        $("#oid").val("");//设置检查项为空
+        $('.myd').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        });
+        $('.myc').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        });
+    </script>
+</block>

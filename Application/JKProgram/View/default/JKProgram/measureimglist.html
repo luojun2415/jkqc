@@ -1,0 +1,101 @@
+<form id="a_form" action="{:U('JKProgram/editfloor')}" style="overflow-x:auto;" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal">
+	 			<volist name="arr_floor" key="k" id="vo">
+	 			<span style="font-size: 16px;font-weight: bold;">{$vo.title}</span><br />
+				<table border="1" style="text-align:center;margin-bottom:20px;">
+			
+	                <tr class="clearfix">
+						<td class="clearfix">
+	               		<input id="myd_{$k}" class="myd ids row-selected" type="checkbox" >全选
+	               		
+	          			</td>
+	              
+	               		<volist name="vo['_'][0]['_']" key="j" id="finit">
+	                		<td>
+	    						<input id="myd_{$k}_c_{$j}" class=" myc ids row-selected" 
+	    						type="checkbox"  value="">		
+	       					</td>
+	               		</volist>
+	                </tr>
+	           		
+	           		<volist name="vo._" id="ch">
+	           		<tr>
+	           			<td></td>
+	        			<td class="clearfix popup-gallery">
+	         			<input class="myd_{$k} myr_{$k} ids row-selected measureselect"  
+	         			type="checkbox" name="id[]" value="{$ch.id}">
+	         			<notempty name="ch.measureimg">	
+	         				<a href="{$ch.measureimg}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+							<span style="color:blue">{$ch.title}</span>	
+							</a>
+						<else/>
+							{$ch.title}	
+						</notempty> 
+	        			</td>
+						<volist name="ch._" key="j" id="sh">
+						<td class="popup-gallery" style="width: 80px;margin-bottom:0px;">
+							<input class="myd_{$k} myd_{$k}_c_{$j} ids row-selected measureselect" type="checkbox" name="id[]" value="{$sh.id}">
+							<notempty name="sh.measureimg">	
+								<a href="{$sh.measureimg}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+								<span style="color:blue">{$sh.title}</span>	
+								</a>
+							<else/>
+								{$sh.title}	
+							</notempty> 
+						</td>
+						</volist>
+					</tr> 
+	           		</volist>
+	              
+	                
+				  </table>
+	            </volist>
+	            <div>提示：已有平面图的楼层字体为红色,已有测量图的字体为蓝色，点击可查看平面图或测量图，尚未配置楼层平面图的楼层字体为黑色</div>
+	        </form>
+	        <script>
+	        	$(function(){
+	        		
+	        		
+	        		$(".measureselect").on('change',function(){   
+	        		
+	        			var val=$("#measureimgs").val();
+	        			//判断是否是选中状态并将id传递到操作数值中
+	        			if($(this).is(":checked")){	        					        				
+	        				//将id放入操作数值中
+	        				if(val)
+	        					var newval=val+$(this).val()+",";
+	        				else
+	        					var newval=$(this).val()+",";
+	        				$("#measureimgs").val(newval);	        		
+	        			}
+	        			else{
+	        				//将id调出操作数值中		
+							if(val.indexOf($(this).val()) > 0 ){	
+								
+							    var newval=val.replace($(this).val()+",","");
+							    $("#measureimgs").val(newval);	   
+							}
+	        			}
+	        		});
+        		  $('.myd').on('change',function(){
+        	        	var id = $(this).attr("id");
+        	            $('.'+id).prop('checked',this.checked);
+        	            changecheck();//遍历所有checkbox框
+        	        });
+        	        $('.myc').on('change',function(){
+        	        	var id = $(this).attr("id");
+        	            $('.'+id).prop('checked',this.checked);
+        	            changecheck();//遍历所有checkbox框
+        	        });
+	        	});
+	        	function changecheck(){
+	        		var val='';
+        		 	$('table').find(':checkbox').each(function(){
+        			  if ($(this).is(":checked")) {
+        			    //操作
+        			    if($(this).val()!='' && $(this).val()!=undefined && $(this).val()!='on')
+        			    	val+=$(this).val()+",";
+        			  }        			  
+        			});
+        		 	$("#measureimgs").val(val);	  
+	        	}
+	        </script>

@@ -1,0 +1,206 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<style>
+	.builds{
+		height:600px;
+		overflow-y:auto;
+		overflow-x:auto;
+		white-space: nowrap;
+	}
+	.build{
+		margin-left:30px;
+		display: inline-table;
+  		vertical-align: top;
+ 
+	}
+	.add{
+		width:30px;font-size:25px;color:gray;
+	}
+	.add_floor{
+		height:30px;font-size:25px;color:gray;
+	}
+</style>
+    <div class="main-title">
+        <h2>{$floor_name}&nbsp;楼栋详情</h2>
+        <div class="with-padding">
+            <a onClick="javascript :history.back(-1);" class="btn btn-ajax btn-success btn">返回</a>
+           <a class="btn a_form btn-success"
+                    target-form="ids">{:L('修改楼层与房间')}
+            </a>
+            <a class="btn btn-ajax btn-success" href="{:U('JKProgram/addfloor', array('build_id' => $floor_pid,'name'=>$floor_name ))}"
+                    >{:L('新增楼层')}
+            </a>
+             
+             <a class="btn btn-success" href="{:U('JKProgram/surfloor2')}"
+                    >{:L('楼层平面图纸')}
+            </a>
+             <a class="btn btn-success" href="{:U('JKProgram/surfloor1')}"
+                    >{:L('实测平面图')}
+            </a>
+            
+            <button class="btn btn-danger ajax-post confirm" url="{:U('JKProgram/delfloor', array('build_id' => $floor_pid))}"
+                    target-form="ids">{:L('_DELETE_')}
+            </button>
+        </div>
+        <!-- <div class="with-padding">
+            <a href="{:U('JKProgram/addlouc?', array('id' => $floor_pid))}" class="btn btn-ajax btn-success btn">添加新层</a>
+        </div> -->
+    </div>
+
+    <div class="with-padding">
+    	 <div>提示：已有平面图的楼层字体为红色,点击可查看平面图，尚未配置楼层平面图的楼层字体为黑色</div>
+    	<form id="a_form" action="{:U('JKProgram/editfloor')}" style="overflow-x:auto;" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal">
+ 			<div class="builds">
+ 			<volist name="arr_floor" key="k" id="vo">
+ 			<div class="build">
+ 			<span style="font-size: 16px;font-weight: bold;">{$vo.title}
+            <a style="font-size:13px;" href="{:U('JKProgram/editfloor')}&id={$vo.id}">修改单元名称</a>  	
+ 			</span><br />
+			<table border="1" style="text-align:center;margin-bottom:20px;">
+		
+                <tr class="clearfix">
+					<td class="clearfix">
+               		<input id="myd_{$k}" class="myd ids row-selected" type="checkbox" name="id[]" value="{$vo.id}">全选
+               		
+          			</td>
+              
+               		<volist name="vo['max']" key="j" id="finit">
+                		<td>
+    						<input id="myd_{$k}_c_{$j}" data-d="myd_{$k}" class=" myc myd_{$k} myc_{$j} ids row-selected" 
+    						type="checkbox"  value="">		
+       					</td>
+               		</volist>
+               		<td class="add" rowspan="{$vo.count}"><a href="{:U('JKProgram/add_floor_room', array('build_id' => $floor_pid,'name'=>$floor_name ))}">+</a></td>
+                </tr>
+           		<tr class="clearfix">
+           			<td class="add_floor" colspan="{$vo.room_count}"><a href="{:U('JKProgram/addfloor', array('build_id' => $floor_pid,'name'=>$floor_name ))}">+</a></td>
+				</tr>
+			
+           		<volist name="vo._" key="h" id="ch">
+           		<tr>
+           			<td></td>
+           			
+        			<td class="clearfix popup-gallery">
+         			<input data-d="myd_{$k}" id="myd_{$k}_r_{$h}" class="myd_{$k} myr ids row-selected"  
+         			type="checkbox" name="id[]" value="{$ch.id}">
+         			<notempty name="ch.imgpath">	
+         				<a href="{$ch.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+						<span style="color:red">{$ch.title}</span>	
+						</a>
+					<else/>
+						{$ch.title}	
+					</notempty> 
+					
+					<!-- <a href="{:U('JKProgram/addroom', array('build_id' => $floor_pid,'name'=>$floor_name ))}">增加房间</a>
+        			 -->
+
+        			<sapn class="btn" onclick="addroom('{$ch.id}')">增加房间
+           			</span>
+           			
+
+        			</td>
+					<volist name="ch._" key="j" id="sh">
+					<td class="popup-gallery" style="width: 80px;margin-bottom:0px;">
+						<input class="myd_{$k} myd_{$k}_r_{$h} myd_{$k}_c_{$j} ids row-selected myb"
+						data-d="myd_{$k}" data-dr="myd_{$k}_r_{$h}" data-dc="myd_{$k}_c_{$j}"  type="checkbox" name="id[]" value="{$sh.id}">
+						<notempty name="sh.imgpath">	
+							<a href="{$sh.imgpath}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+							<span style="color:red">{$sh.title}</span>	
+							</a>
+						<else/>
+							{$sh.title}	
+						</notempty> 
+					</td>
+					</volist>
+				</tr> 
+           		</volist>
+              
+                
+			  </table>
+			  </div>
+            </volist>
+            </div>
+           
+        </form>
+    </div>
+	
+</block>
+<block name="script">
+<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('.popup-gallery').each(function () { // the containers for all your galleries
+               	
+            	$(this).magnificPopup({
+                    delegate: 'a',
+                    type: 'image',
+                    tLoading: '正在载入 #%curr%...',
+                    mainClass: 'mfp-img-mobile',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                    },
+                    image: {
+                        tError: '<a href="%url%">图片 #%curr%</a> 无法被载入.',
+                        titleSrc: function (item) {
+                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                            return '';
+                        },
+                        verticalFit: true
+                    }
+                });
+            });
+        });
+        
+        $('.myd').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        });
+        $('.myc').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        	id = $(this).attr("data-d");
+        	if ($('#'+id).is(':checked')) {
+        		$('#'+id).prop('checked',this.checked);
+        	}
+        });
+        
+        $('.myr').on('change',function(){
+        	var id = $(this).attr("id");
+            $('.'+id).prop('checked',this.checked);
+        	id = $(this).attr("data-d");
+        	if ($('#'+id).is(':checked')) {
+        		$('#'+id).prop('checked',this.checked);
+        	}
+        });
+        
+        $('.myb').on('change',function(){
+        	if(!$(this).is(':checked')){
+        		var id = $(this).attr("data-d");
+            	if ($('#'+id).is(':checked')) {
+            		$('#'+id).prop('checked',this.checked);
+            	}
+            	id = $(this).attr("data-dr");
+            	if ($('#'+id).is(':checked')) {
+            		$('#'+id).prop('checked',this.checked);
+            	}
+                id = $(this).attr("data-dc");
+                if ($('#'+id).is(':checked')) {
+            		$('#'+id).prop('checked',this.checked);
+            	}
+        	}
+        	
+            
+           
+        });
+        function addroom(pid){
+        	
+        	window.location.href="{:U('admin/j_k_program/addroom/pid/"+pid+"', array('build_id' => $floor_pid,'name'=>$floor_name))}";
+        	
+        }
+    </script>
+</block>

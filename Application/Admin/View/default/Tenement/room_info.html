@@ -1,0 +1,278 @@
+<extend name="Public/base"/>
+<block name="style">
+<style>
+.main-title h2 {
+	font-size: 20px;
+}
+
+.invoice-head{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+	font-weight: bold;
+}
+.invoice-heads{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-headss{
+	height:200px;
+	line-height:200px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-heads .col-xs-7{
+	padding: 0px;
+}
+.invoice-heads .col-xs-5{
+	padding: 0px;
+}
+.invoice-heads .col-xs-3{
+	padding: 0px;
+}
+.invoice-heads .col-xs-9{
+	padding: 0px;
+}
+.invoice-heads .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.invoice-headss .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.col-xs-12{
+	padding:0px;
+}
+</style>
+</block>
+<block name="body">
+    <div class="col-xs-6 main-title" style="PADDING: 0;">
+        <h2 style="margin: 0;padding: 0;height: 50px;line-height: 50px;">房间问题详情</h2>
+       
+    </div>
+    <div class="col-xs-6" style="    float: right;height: 50px;line-height: 50px;text-align: right;border-bottom: 1px solid #CCC;">
+<!--    <a href="javascript:xiangqing('{$room_id}')">预览</a>  -->
+    <a href="#" onclick="ex_room_word1()" style="background: #36c6d3;COLOR: #FFF;PADDING: 5px 20px;border-radius: 5px !important;">导出</a> 
+    </div>
+   
+	<div style="padding:0 30px;">
+	<div class="col-xs-12 invoice-content-2 bordered" style="    margin-top: 20px;border-top:1px solid #C6C6C6;">
+    	<div class="invoice-head">
+	        <div class="col-xs-12">
+	       		 项目：{$rooms[0][name]}
+	            <!-- <div >                  
+	                <h3 class="uppercase">项目：{$data['ownid']}</h3>
+	            </div> -->
+	        </div>
+              <!--  <div class="col-xs-3">
+               <br>
+                   <span class=""> 问题提交人:{$data['authid']}</span>
+               </div> -->
+		</div>
+		<div class="col-xs-12 invoice-heads">
+      		<div class="invoice-title uppercase" style="float:left;width:10%;border-right: 1px solid #C6C6C6;">问题位置</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:50%;border-right: 1px solid #C6C6C6;">{$rooms[0][position]}</div>
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">验收阶段</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:25%;">{$rooms[0]['stage']}</div>
+		</div>
+           
+        <div class="col-xs-12 invoice-heads" style="height:auto;">   
+			<div class="invoice-title uppercase" style="width:10%;height:auto;float:left;border-right: none;">&ensp;</div>
+            
+            <div class="invoice-desc inv-address" id="img_html" style="width:90%;height:auto;float:left;border-left: 1px solid #C6C6C6;position:relative;right:1px;">
+            	<div id="problems"></div>
+            	<img id="houseimg" src="{$house_picture_url}"/>
+            	
+            </div>
+            <!-- <canvas id="myCanvas"></canvas> -->
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">问题编号</div>
+            <!-- <div class="invoice-desc inv-address" style="width:85%;float:left;">aaaa</div> -->
+            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">检查项目</div>
+            <div class="invoice-title uppercase" style="width:35%;float:left;border-right: 1px solid #C6C6C6;">问题描述</div>
+            <div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">检查人</div>
+            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">检查时间</div>
+            <div class="invoice-title uppercase" style="width:15%;float:left;">责任单位</div>
+		</div>
+		<foreach name="rooms" item="v" key="k">
+			<!-- <if condition="$v[problem_id]"> -->
+			<div class="col-xs-12 invoice-heads">
+				<div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">{$k+1}</div>
+	            <!-- <div class="invoice-desc inv-address" style="width:85%;float:left;">aaaa</div> -->
+	            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">{$v[check_item]}</div>
+	            <div class="invoice-title uppercase" style="width:35%;float:left;border-right: 1px solid #C6C6C6;">{$v[problem_describe]}</div>
+	            <div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">{$v[submit_user]}</div>
+	            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">{$v[submit_time]}</div>
+	            <div class="invoice-title uppercase" style="width:15%;float:left;">{$v[auth_title]}</div>
+            </div>
+            <!-- </if> -->
+		</foreach>
+		<img id="img_src" src="" />
+       </div>
+       </div>
+       <input type="hidden" id="house_picture_url" value="{$house_picture_url}" />
+       <input type="hidden" id="point_arr" value="{$coordinates}" />
+</block>
+
+<block name="script">
+	<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+	<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+	<script type="text/javascript" src="/Application/Admin/Static/js/html2canvas/dist/html2canvas.js"></script>
+	<script type="text/javascript" src="/Application/Admin/Static/js/jsPDF/dist/jspdf.min.js"></script>
+	<script>
+		var url= "{$house_picture_url}";
+		//alert(url);
+		var points_str="{$coordinates}";
+		//var points_str="0,0|300,400";
+		//alert(point_str);
+		//add by hubin on 2017-6-21 标绘问题点（支持多个），坐标格式"x1,y1|x2,y2..."
+		var house = document.getElementById("houseimg");
+		//户型图左上角坐标
+		var imgX = house.offsetLeft;
+		var imgY = house.offsetTop; 
+		//console.log("imgX="+imgX+",imgY="+imgY);
+		if(points_str.length>0){
+			var points_array = points_str.split("|");
+			//只有一个点
+			for(var i=0;i<points_array.length;i++){
+				var point = points_array[i].split(",");
+				//标绘问题点
+				drawPoint(point,i+1);
+				
+			}
+		}
+		/**
+		 * 标绘问题点
+		 * add by hubin on 2017-6-21
+		 */
+		function drawPoint(point,desc){
+			if(point.length<2){
+				//alert("问题点'"+desc+"'位置信息有误，请联系系统管理员！");
+				return;
+			}
+			var x = imgX + parseFloat(point[0]);
+			var y = imgY + parseFloat(point[1]);
+			console.log("x="+x+",y="+y);
+			var divbug = document.getElementById("problems");
+			divbug.innerHTML = divbug.innerHTML + "<div style='position:absolute;"+"left:"+x+"px;top:"+y+"px;"+
+			"width:16px;height:16px;background-color:#F00;border-width:2px;border-radius:8px;-webkit-border-radius:8px;'>"+
+	         "<span style='height:16px; line-height:16px; display:block; color:#FFF; text-align:center'>"+desc+"</span></div>";
+		}
+		//将图片及问题点转换为画布
+		var board="";
+		var canvas, board, myImage;
+		//drawcanvas("{$house_picture_url}");
+		function drawcanvas(url){				
+			canvas=document.getElementById("myCanvas");
+			board=canvas.getContext("2d");					
+			canvas.height = screen.width;
+			canvas.width = screen.width;
+			board.lineWidth = 1;
+			board.strokeStyle = "#0000ff";
+			//填充处理图像
+			myImage =new Image();			
+			//myImage.crossOrigin = "*"
+			myImage.src = url;
+			imgsrc=url;
+			//初始化标点事件
+			myImage.onload = function () { 
+				//drawImage();
+				canvas.height = myImage.width+10;
+				canvas.width = myImage.width+10;				
+	        	board.drawImage(myImage, 0, 0,myImage.width,myImage.height);   
+	            var imgData = canvas.toDataURL("image/png");  
+	          
+	            //$("#imgId").attr("src",imgData);
+	        }  
+		}
+		/**
+		 * 导出房间详情图
+		 * tanjiewen 2017-6-22 11:45
+		 */
+		function room_word(){
+			var yuanma=document.documentElement.outerHTML;
+			//alert(yuanma);	
+		}
+		
+		function xiangqing(id){
+			 window.location.href = '/index.php?s=/admin/Tenement/look_room_word/room_id/'+id;
+		}
+		/**
+		 * 导出问题详情页word
+		 * tanjiewen 2017-6-22 1:49
+		 */
+		function ex_room_word(){
+  			html2canvas(document.body, {
+		        onrendered: function(canvas) {
+
+		            //通过html2canvas将html渲染成canvas，然后获取图片数据
+		            var imgData = canvas.toDataURL('JPEG');
+		            //document.body.appendChild(canvas);
+		            //初始化pdf，设置相应格式
+		            var doc = new jsPDF("p", "mm", "a4");
+
+		            //这里设置的是a4纸张尺寸
+		            doc.addImage(imgData, 'JPEG', 0, 0,210,297);
+
+		            //输出保存命名为content的pdf
+		            doc.save('{$rooms[0][position]}详情页.pdf');
+		        }
+		    });
+		}
+		function ex_room_word1(){	
+				var height=$("#houseimg").height();
+				
+			   html2canvas($('#img_html'), {  
+			        height:height,  
+			        onrendered: function(canvas) {           
+			            var imgData = canvas.toDataURL("image/png"); 
+			            var img = new Image();  
+						img.src = imgData;
+						img.onload = function() {
+							//drawcanvas(imgData);return;
+						 /*   var doc = new jsPDF('p', 'px','a3');  
+				            //第一列 左右边距  第二列上下边距  第三列是图片左右拉伸  第四列 图片上下拉伸  
+				            doc.addImage(imgData, 'JPEG', -9, 0,650,1500);  
+				            doc.addPage();  
+				            doc.addImage(imgData, 'JPEG', -9, -900,650,1500);  
+				            doc.save('{$rooms[0][position]}详情.pdf');   */
+							var yuanma = imgData;			
+				         
+							var room_name="{$rooms[0][position]}";
+							var room_id ="{$rooms[0][room_id]}";
+					
+						 	$.post("/index.php?s=/admin/Tenement/ex_room_word",{img_html:yuanma,room_name:room_name,room_id:room_id},
+					  				  function(data){
+						 			//	alert(data);
+						 	  		// $("#img_src").attr("src",data);
+						 				
+						 				window.location.href = data;
+					  			},
+					  		"text");  
+							
+						}
+			         
+			        }  
+			    }); 
+		}
+	</script>
+</block>

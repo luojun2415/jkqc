@@ -1,0 +1,269 @@
+<extend name="Public/base"/>
+
+
+
+<block name="body">
+	<style>
+	.main-title {
+	    height: 50px;
+	    line-height: 50px;
+	    background: #FFF;
+	    position: fixed;
+	    width: 100%;
+	    margin-top: 0px;
+	}
+	.main-title h2 {
+	    padding: 0px;
+	    font-size: 20px;
+	    font-weight: 400;
+	    color: #445566;
+	    border-bottom: 1px solid #ccc;
+	    padding-top: 0;
+	    margin-top: 0;
+	    height: 50px;
+	    line-height: 50px;
+	    margin-bottom: 0;
+	}
+	.clearfix{
+	    height: 50px;
+	    background: #FFF;
+	    position: fixed;
+	    width: 100%;
+	    margin-top: 50px;	
+	}
+	.clearfix .col-xs-8{
+	    position: fixed;
+	    padding: 0;
+	    text-align: left;
+	    height: 50px;
+	    line-height: 50px;
+	    padding-left: 2px;
+	}
+	.clearfix .col-xs-4{
+	    background: #FFF;
+	    position: fixed;
+	    text-align: right;
+	    right: 0;
+	    padding-top: 10px;	
+	}
+	.data-table{
+		margin-top: 100px;
+	}
+	.page-content-wrapper .page-content{
+		padding-top: 0px !important;
+		
+	}
+</style>
+    <div class="main-title">
+        <h2>楼栋列表</h2>
+        <!-- <div class="with-padding">
+            <a href="/index.php?s=/admin/j_k_program/addMore.html" class="btn btn-ajax btn-success btn">
+            	快速新建楼栋</a>
+        </div> -->
+        
+    </div>
+   <div class="clearfix" style="padding-left:12px;margin-right: 24px;">
+   		<div class="col-xs-8">
+   			{$StageName}(共{$floor_count}栋)
+   		</div>
+        <div class="col-xs-4" style="margin-right: 24px; text-align: right;">
+			
+       		<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+            <button class="btn ajax-post" url="{:U('JKProgram/examine_floor')}"
+                    target-form="ids">提交审核
+            </button>
+            <button class="btn ajax-post" url="{:U('JKProgram/main_generate_register_code')}"
+                    target-form="ids">审核通过
+            </button>
+            <button class="btn ajax-post" url="{:U('JKProgram/examine_floor',array('status' => 0))}"
+                    target-form="ids">审核驳回
+            </button>
+        
+        </div>
+        <script>
+            function post_select_form(){
+                var ids=$('.ids').serialize();
+                var title="{:L('_USER_GROUP_SELECT_')}";
+                $.post("{:U('user/changeGroup')}",ids,function(msg){
+                    (new $.zui.ModalTrigger({custom: msg,title:title})).show();
+                })
+            }
+        </script>
+        
+  
+    </div>
+    <div class="data-table with-padding">
+    	<table id="table-data"  class="table table-bordered table-striped ">
+	    <thead>
+	        <tr>
+	        <th style="" class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+	      <!--   <th style="" class="">排序<i class="fa fa-sort-asc mysort" ID="1"></i></th> -->
+			<th style="" class="">楼栋名称<i class="fa fa-sort-asc mysort" ID="2"></i></th>
+			<th style="" class="">项目分期<i class="fa fa-sort-asc mysort" ID="3"></i></th>
+			<th class="">{:L('_OPERATE_')}<i class="fa fa-sort-asc mysort" ID="4"></i></th>
+			<th style="" class="">审核状态<i class="fa fa-sort-asc mysort" ID="5"></i></th>
+			</tr>
+	    </thead>
+	    <tbody>
+	    	<notempty name="floordata">
+			<volist name="floordata" id="vo">
+			<tr>
+				<td style="width:20px;" ><input class="ids" type="checkbox" name="id[]" value="{$vo.id}"/></td>
+<!-- 	            <td><input style="width:85px;" class="sortone"  type="number" value="{$vo.sort}" id = "{$vo.id}" onchange = "changesort(this)"/></td> -->
+				<td><a href="{:U('JKProgram/selectfloor?', array('id' => $vo['id'],'name' => $vo['title']))}">{$vo.title}</a> </td>
+				<td>
+				
+				<if condition="$vo.StagesName neq null">
+	            	{$vo.StagesName}
+	            <else />{$vo.periods}期{$vo.batch}批次{$vo.blocks}标段
+				</if>
+				</td>
+				<td>
+					<a class="btn btn-success" href="{:U('JKProgram/selectfloor?', array('id' => $vo['id'],'name' => $vo['title']))}">楼栋详情</a>
+					<a class="btn btn-success btn-ajax" href="{:U('JKProgram/add', array('id' => $vo['id']))}">修改楼栋信息</a>
+					<a class="btn btn-success" href="{:U('JKProgram/addMore_new', array('id' => $vo['id']))}">快速新建楼层及房间</a>
+				<!-- 	<a class="btn btn-success ajax-get" href="{:U('JKProgram/bind_mask_code', array('id' => $vo['id']))}">绑定楼栋编码</a> 
+					<a class="btn btn-success ajax-get" href="{:U('JKProgram/floor_mask_code', array('id' => $vo['id']))}">生成房间编码</a>  -->
+				<!-- 	<a class="btn btn-danger confirm ajax-get" href="{:U('JKProgram/setStatus?', array('ids' => $vo['id'],'status' => -1))}" >删除</a> -->
+	            </td>
+	            <td>
+	            	{$vo.examine}
+	            <!-- 	<if condition="$vo.examine eq '未审核' ">
+	            	<a class="btn ajax-get btn-success" href="{:U('JKProgram/examine_floor?', array('id' => $vo['id'],'status' => 1))}">提交审核</a>
+	            	</if>
+	            	<if condition="$vo.examine eq '审核中' ">
+	            	<a class="btn ajax-get btn-success" href="{:U('JKProgram/main_generate_register_code?', array('id' => $vo['id']))}">审核通过</a>
+	            	</if> -->
+	            </td>
+			</tr>
+			</volist>
+	    </tbody>
+	    </table>
+        
+    </div>
+	<!-- 分页 -->
+	<div class="alert"></div>
+	<div class="with-padding">{$_page}</div>
+	<!-- /分页-->
+</block>
+<block name="script">
+<script>
+	
+	function changesort(set)
+	{
+		sort = set.value;
+		id = set.id;
+		if(sort<0||sort>999||sort==''){
+			updateAlert("序号应该在0-999之间", 'error');
+			setTimeout("reload()", 500);return;
+		}else{
+			$.post(U('admin/JKProgram/savesorts'),{changgeid:id,changesort:sort},function(msg){
+				if(msg.status){
+					updateAlert(msg.msg, 'success');
+				}else{
+					if(msg.msg == undefined || msg.msg == ''){
+						updateAlert("无权限修改排序", 'error');
+						
+					}else{
+						updateAlert(msg.msg, 'error');
+					}
+					setTimeout("reload()", 500);return;
+				}
+				//setTimeout("reload()", 700);
+			});
+		}
+	}
+	function reload(){
+		window.location.reload();
+	}
+
+    //JS统一排序
+
+    $('.mysort').click(function () {
+        var id=this.id;
+        var tabNode = document.getElementById("table-data");
+        var rows0 = tabNode.rows;
+        var rows1 = [];
+        //现将元素拷贝一份出来， 第一行不用排序
+        for (var x = 1; x < rows0.length; x++) {
+            rows1[x - 1] = rows0[x];
+        }
+
+        var myth=$(this);
+        if(myth.hasClass('fa-sort-asc')){
+            var rows=bubbleSortasc(rows1,id);
+            myth.removeClass('fa-sort-asc');
+            myth.addClass('fa-sort-desc');
+        }
+        else{
+            var rows=bubbleSortdesc(rows1,id);
+            myth.removeClass('fa-sort-desc');
+            myth.addClass('fa-sort-asc');
+        }
+
+        for (var x = 0; x < rows.length; x++) {
+
+            rows[x].parentNode.appendChild(rows[x]);
+        }
+
+        $('td').addClass('text-ellipsis');
+
+    });
+
+
+    function bubbleSortdesc(arr,id) {
+        var low = 0;
+        var high= arr.length-1; //设置变量的初始值
+        var tmp,j;
+        console.time('2.改进后冒泡排序耗时');
+        while (low < high) {
+            for (j= low; j< high; ++j) {         //正向冒泡,找到最大者
+                if (arr[j]['cells'][id].innerHTML< arr[j+1]['cells'][id].innerHTML) {
+                    tmp = arr[j];
+                    arr[j]=arr[j+1];
+                    arr[j+1]=tmp;
+                }
+            }
+            --high;  //修改high值, 前移一位
+            for (j=high; j>low; --j) {          //反向冒泡,找到最小者
+                if (arr[j]['cells'][id].innerHTML>arr[j-1]['cells'][id].innerHTML) {
+                    tmp = arr[j];
+                    arr[j]=arr[j-1];
+                    arr[j-1]=tmp;
+                }
+            }
+            ++low;  //修改low值,后移一位
+        }
+        console.timeEnd('2.改进后冒泡排序耗时');
+        return arr;
+    }
+
+    function bubbleSortasc(arr,id) {
+        var low = 0;
+        var high= arr.length-1; //设置变量的初始值
+        var tmp,j;
+        console.time('2.改进后冒泡排序耗时');
+        while (low < high) {
+            for (j= low; j< high; ++j) {         //正向冒泡,找到最大者
+                if (arr[j]['cells'][id].innerHTML> arr[j+1]['cells'][id].innerHTML) {
+                    tmp = arr[j];
+                    arr[j]=arr[j+1];
+                    arr[j+1]=tmp;
+                }
+            }
+            --high;  //修改high值, 前移一位
+            for (j=high; j>low; --j) {          //反向冒泡,找到最小者
+                if (arr[j]['cells'][id].innerHTML<arr[j-1]['cells'][id].innerHTML) {
+                    tmp = arr[j];
+                    arr[j]=arr[j-1];
+                    arr[j-1]=tmp;
+                }
+            }
+            ++low;  //修改low值,后移一位
+        }
+        console.timeEnd('2.改进后冒泡排序耗时');
+        return arr;
+    }
+
+</script>
+</block>

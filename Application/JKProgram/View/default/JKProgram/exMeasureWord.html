@@ -1,0 +1,56 @@
+<html class="device-desktop screen-desktop"><head>
+    <meta charset="UTF-8">    
+</head>
+<body style="margin: 10 200px;">
+
+<p style="margin-left:0;text-indent:0;text-align:center">
+    <strong><span style=";font-family: 宋体;font-size: 24px;font-family:宋体">测量详情单</span></strong>
+</p>
+
+<p style="margin-right:9px;margin-left:9px;text-autospace:ideograph-numeric;text-align:justify;text-justify:inter-ideograph">
+    <span style=";font-family:宋体;font-size:19px"><span style="font-family:宋体">工程名称：{$data[0]['ownid']}</span> 
+     &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style="font-family:宋体;">编号：</span></span>
+</p>
+
+
+<volist name="data" id="list" key="i">
+<table border="1" style="text-align:center;">
+<tr>
+  <th colspan="3">检查项：{$list['option_id']}</th>
+  <th colspan="3">检查位置：{$list['project_ids']}</th>
+  <th colspan="2">检查人：{$list['authid']}</th>
+  
+</tr>
+<tr>
+  <th>测量点</th>
+  <th>测量值</th>
+  <th>合格最小值</th>
+  <th>合格最大值</th>
+  <th>整改最小值</th>
+  <th>整改最大值</th>
+  <th>质量锤最小值</th>  
+  <th>质量锤最大值</th>
+</tr>
+<volist name="list['info']" id="vo" key="key1">
+<tr>
+  <td>{$key1}</td>
+  <td>{$vo}</td>
+  <td>{$list['minqualified']}</td>
+  <td>{$list['maxqualified']}</td>
+  <td>{$list['minzhenggai']}</td>
+  <td>{$list['maxzhenggai']}</td>
+  <td>{$list['mindestroy']}</td>
+  <td>{$list['maxdestroy']}</td>
+</tr>
+</volist>
+</table>
+<p>
+    <span style=";;font-family:宋体;font-size:19px;font-family:宋体">提交时间:{$list['create_time']}</span>
+</p>
+</volist>
+
+
+
+
+</body></html>

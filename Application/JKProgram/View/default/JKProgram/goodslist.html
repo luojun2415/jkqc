@@ -1,0 +1,47 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<!-- 标题栏 -->
+    <div class="main-title">
+        <h2>{:L('项目信息')}</h2>
+    </div>
+    <div class="with-padding">
+        <div class="fl">
+            <a href="{:U('JKProgram/goodsEdit')}" class="btn btn-ajax btn-success btn">新增</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="with-padding">
+        <table id="table-data" class="table table-bordered table-striped table-hover">
+            <!-- 表头 -->
+            <thead>
+            <tr>
+                <th>项目编号</th><th>项目名称</th><th>项目别名</th><th>创建时间</th><th>状态</th><th>操作</th>
+			</tr>
+            </thead>
+            <tbody>
+	            <volist name="list" id="vo">
+	            	<tr>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$vo['other_id']}</td>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$vo['name']}</td>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$vo['other_name']}</td>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$vo['create_time']}</td>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">
+	                    <a href="{:U('JKProgram/setgoodsstatus?')}"
+	                    
+	                     class="ajax-get">启用</a></td>
+	                    <td style="width:auto;max-width: 150px;" class="text-ellipsis">
+	                    <a href="{:U('JKProgram/goodsedit?')}">编辑</a></td>
+	                </tr>
+	            </volist>
+            </tbody>
+       </table>
+    </div>
+</block>
+
+<block name="script">
+    <script>
+      
+    </script>
+</block>

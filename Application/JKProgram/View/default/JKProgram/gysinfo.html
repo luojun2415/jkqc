@@ -1,0 +1,137 @@
+<extend name="Public/base" />
+<block name="style">
+
+<style>
+.overview dt::before {
+    content: ".";
+    left: 0;
+    line-height: 14px;
+    position: absolute;
+    top: 0;
+}
+.overview dl {
+    padding: 0;
+}
+.overview dt {
+    display: inline-block;
+    font-weight: bold !important;
+    line-height: 25px;
+    padding-left: 10px;
+    position: relative;
+}
+.overview dd {
+    display: inline;
+    line-height: 25px;
+    margin-left: 10px;
+}
+</style>
+
+</block>
+
+<block name="script">
+
+</block>
+
+<block name="body">
+
+        <div class="col-xs-12" style="MARGIN-BOTTOM: 10px;font-size: 16px;">供应商详情</div>
+        <div class="col-xs-12" style="border-bottom: 1px solid #C6C6C6;MARGIN-BOTTOM: 10px;"></div>
+        <div class="col-xs-12" style="border: 5px solid #ca9a37;">
+            <div class="col-xs-12">
+                <h1 class="" style="display: inline-block;">
+                    {$info['ProviderName']}
+                </h1>
+                <span class="" style="background-color: rgb(67, 149, 225);display: inline-block;color: white;padding: 0 5px;
+                border-radius: 3px !important;"> {$info['RegistrationStatus']}</span>
+                <span class="status"></span>
+            </div>
+            <span class="col-xs-12">
+			                <i class="" aria-hidden="true"></i>统一社会信用代码：<span class="nameBoxColor">{$info['UniformSocialCreditCode']}</span>
+			            </span>
+            <span class="col-xs-12"><i class="abs fa fa-user1" aria-hidden="true"></i>法定代表人：<span class="nameBoxColor"> {$info['Corporation']}
+			                     </span></span>
+
+
+
+            <span class="col-xs-12">
+				                 	<i class="abs fa fa-map-marker1" aria-hidden="true"></i>登记机关： <span class="nameBoxColor"> {$info['RegistrationAuthority']}</span>
+				                 </span>
+            <span class="col-xs-12">
+				                 <i class="abs fa fa-info-circle1" aria-hidden="true"></i>成立日期 : <span class="nameBoxColor"> {$info['RegistrationDate']}</span>
+			                 </span>
+
+            <input type="hidden" id="subsites" value="100000">
+            <input type="hidden" id="prip" value="">
+            <input type="hidden" id="scId" value="">
+
+        </div>
+        <div class="col-xs-12" id="wrap-base" style="border: 5px solid #ca9a37;margin-top: 5px;">
+            <div style="padding: 20px 20px 40px;">
+                <div class="details clearfix">
+                    <div class="classify" style="font-size: 16px;margin-bottom: 10px;color: #804000;">营业执照信息</div>
+
+                    <div class="overview">
+                        <dl class="col-xs-6">
+                            <dt class="item"> 统一社会信用代码：</dt>
+                            <dd class="result"><!-- 这里还需要添加业务逻辑 -->
+                                {$info['UniformSocialCreditCode']}
+
+                            </dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item_right">企业名称：</dt>
+                            <dd class="result" > {$info['ProviderName']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item">类型：</dt>
+                            <dd class="result"> {$info['ProviderType']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item_right">法定代表人：</dt>
+                            <dd class="result"> {$info['Corporation']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item">注册资本：</dt>
+                            <dd class="result">
+                                {$info['RegisterFund']}
+                            </dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item_right">成立日期：</dt>
+                            <dd class="result"> {$info['EstablishDate']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item">营业期限自：</dt>
+                            <dd class="result"> {$info['BusinessDateFrom']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item_right">营业期限至：</dt>
+                            <dd class="result"> {$info['BusinessDateTo']} </dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item">登记机关：</dt>
+                            <dd class="result"> {$info['RegistrationAuthority']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item_right">核准日期：</dt>
+                            <dd class="result"> {$info['LicenceCode']}</dd>
+                        </dl>
+                        <dl  class="col-xs-6">
+                            <dt class="item_right">登记状态：</dt>
+                            <dd class="result"> {$info['RegistrationStatus']}</dd>
+                        </dl>
+                        <dl class="col-xs-6">
+                            <dt class="item">住所：</dt>
+                            <dd class="result" > {$info['WorkAddress']}</dd>
+                        </dl>
+                        <dl class="col-xs-12">
+                            <dt class="item">经营范围：</dt>
+                            <dd>  {$info['BusinessScope']}</dd>
+                        </dl>
+                    </div>
+                </div>
+
+            </div></div>
+
+
+</block>

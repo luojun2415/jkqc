@@ -1,0 +1,183 @@
+<extend name="Public/base"/>
+<block name="style">
+<style>
+p{
+	margin:0 !important;
+	
+}
+.invoice-cust-add .inv-address{
+    margin-top: 10px !important;
+    font-weight: bold;
+}
+.main-title h2{
+	font-size: 16px;
+}
+.invoice-head h3{
+	font-size: 18px;
+	font-weight: bold;
+}
+.invoice-title{
+	font-weight: bold;
+}
+</style>
+</block>
+<block name="body">
+    <div class="main-title">
+        <h2>问题详情</h2>
+    </div>
+
+   <div class="invoice-content-2 bordered">
+           <div class="row invoice-head">
+               <div class="col-xs-12">
+                   <div >                  
+                       <h3 class="uppercase">所属项目：{$data['ownid']}</h3>
+                   </div>
+               </div>
+           </div>
+           <div class="row invoice-cust-add">
+    
+                
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">测量项</span>
+                   <p class="invoice-desc inv-address">{$data['option_id']}&nbsp;{$data['axis']}</p>
+               </div>
+    
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">测量位置</span>
+                   <p class="invoice-desc inv-address">{$data['project_ids']}&nbsp;{$data['axis']}</p>
+               </div>
+               
+               <div class="col-xs-3">
+                   <span class="invoice-title uppercase">测量提交人</span>
+                   <p class="invoice-desc inv-address">{$data['authid']}&nbsp;{$data['axis']}</p>
+               </div>
+            
+                <div class="col-xs-3">
+                   <span class="invoice-title uppercase">测量日期</span>
+                   <p class="invoice-desc inv-address">{$data['create_time']}</p>
+               </div>
+               
+               
+           </div>
+           <div class="row invoice-body" style="margin-top:30px;padding: 0 30px;">
+                   <table class="table table-bordered " >
+                      <!--  <thead >
+                           <tr>
+                               <th>序号</th>
+                               <th>施工单位</th>
+                               <th>监理单位</th>
+                               <th>甲方工程部</th>
+                           </tr>
+                       </thead> -->
+                       <div style="font-weight:bold; text-align:center;height:50px;line-height: 50px;border-top:1px solid #C6C6C6;border-right:1px solid #C6C6C6;">
+	                       <div style="width:10%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;">序号</div>
+	                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;">施工单位</div>
+	                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;">监理单位</div>
+	                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;">甲方工程部</div>
+	                   </div>
+                       <tbody>
+                       		<!-- <php>
+                       			dump($newinfo2);
+                       			echo count($newinfo2)."<br/>";
+                       			echo $jcnum."<br/>";
+                       			dump($maxarr);
+                       		</php>-->
+                       		<volist name='maxarr' id='vo' key = 'k'>
+                       			<if condition="$maxcount neq $k">
+                       			
+                       			<!-- <tr>
+	                               <td style="height:50px;line-height:50px;">{$k}</td>
+	                               <td>{$newinfo2[$k-1]}</td>
+			               		   <td>{$newinfo1[$k-1]}</td>
+			               		   <td>{$newinfo[$k-1]}</td>
+                           		</tr> -->
+                           		 
+			                   <div style="font-weight:bold; text-align:center;height:50px;line-height: 50px;border-right:1px solid #C6C6C6;">
+			                       <div style="width:10%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">{$k}</div>
+			                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">
+
+			                       		<for start="0" end="$jcnum" >
+		                       				<div  style="width:{$widthpersent};height:50px;float:left;border-right:1px solid #C6C6C6;">{$newinfo2[$k-1][$i]}</div>
+		                       			</for>
+
+			                       </div>
+			                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">        
+
+                      			    	<for start="0" end="$jcnum" >
+		                       				<div  style="width:{$widthpersent};height:50px;float:left;border-right:1px solid #C6C6C6;">{$newinfo1[$k-1][$i]}</div>
+		                       			</for>
+			                       		
+			                       </div>
+			                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">
+			                       		
+		                       			<for start="0" end="$jcnum" >
+		                       				<div  style="width:{$widthpersent};height:50px;float:left;border-right:1px solid #C6C6C6;">{$newinfo[$k-1][$i]}</div>
+		                       			</for>
+			                       		
+			                       </div>
+			                   </div>
+			                   
+			                   </if>
+                           </volist>
+                           
+                           <div style=" text-align:center;height:50px;line-height: 50px;border-right:1px solid #C6C6C6;">
+		                       <div style="width:10%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">合格率</div>
+		                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;"><if condition = "$newinfo2">{$level3persent}</if></div>
+		                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;"><if condition = "$newinfo1">{$level2persent}</if></div>
+		                       <div style="width:30%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;"><if condition = "$newinfo">{$level1persent}</if></div>
+		                   </div>
+                       		<div style="text-align:center;width:10%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;">总合格率</div>
+                       		<div style="text-align:center;width:90%;float:left;border-left:1px solid #C6C6C6;border-bottom:1px solid #C6C6C6;height:50px;line-height: 50px;border-right:1px solid #C6C6C6;">{$persent}</div>
+                        <!--    		<td colspan="3"></td> -->
+                         
+                       		
+                       </tbody>
+                   </table>
+                   <div style="height:50px;line-height: 50px;">
+                   		<div style="background: #000000;margin-top: 19px;height: 10px;width: 50px;float: left;"></div><div style="float: left;margin-left:10px;">正常值</div>
+                   		<div style="margin-left:20px;background: #2BA245;margin-top: 19px;height: 10px;width: 50px;float: left;"></div><div style="float: left;margin-left:10px;"><aa style="color:#2BA245;">设计值</aa></div>
+	               		<div style="margin-left:20px;background: #0147FA;margin-top: 19px;height: 10px;width: 50px;float: left;"></div><div style="float: left;margin-left:10px;"><aa style="color:#0147FA;">需整改</aa></div>
+	                	<div style="margin-left:20px;background: #E83E32;margin-top: 19px;height: 10px;width: 50px;float: left;"></div><div  style="float: left;margin-left:10px;"><aa style="color:red;">需质量锤</aa></div>
+              		</div>
+               </div>
+               
+           </div>
+           
+           <!-- <div class="row">
+               <div class="col-xs-12">
+                   <a class="btn btn-lg green-haze hidden-print uppercase print-btn" onclick="javascript:window.print();">Print</a>
+               </div>
+           </div> -->
+       </div>
+</block>
+
+<block name="script">
+<link type="text/css" rel="stylesheet" href="__PUBLIC__/js/ext/magnific/magnific-popup.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('.popup-gallery').each(function () { // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: 'a',
+                    type: 'image',
+                    tLoading: '正在载入 #%curr%...',
+                    mainClass: 'mfp-img-mobile',
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                    },
+                    image: {
+                        tError: '<a href="%url%">图片 #%curr%</a> 无法被载入.',
+                        titleSrc: function (item) {
+                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                            return '';
+                        },
+                        verticalFit: true
+                    }
+                });
+            });
+                    });
+    </script>
+</block>

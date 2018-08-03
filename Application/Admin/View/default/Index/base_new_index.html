@@ -1,0 +1,206 @@
+<extend name="Public/base"/>
+<block name="body">
+	<style>
+		.name_text{
+			width:70px;
+			height:50px;
+			float:left;
+			font-size:12px;
+		}
+		
+		.table th, .table td {  
+		    text-align: center;  
+		    vertical-align: middle!important;  
+		 }  
+		 .table{  
+		     margin:0;
+		 }  
+		 .hidden{
+			display:none;
+		 }
+		
+	</style>
+    <div class="main-title">
+        <h2>{:L("项目列表")}{:L("（选择默认关注的项目）")}</h2>
+       <!--  <div class="with-padding">
+            <a href="/index.php?s=/admin/j_k_program/goodsedit.html" class="btn btn-ajax btn-success btn">
+            	新增</a>
+             
+        </div>
+ -->
+    </div>
+
+	<table id="pro_table" class="table table-bordered table-striped "  >
+	    <thead>
+	        <tr>
+			
+			<th style="width:20%">{:L('区域公司')}</th>
+			<th style="width:80%">
+			<table class="table table-bordered table-striped ">
+			<thead >
+			<tr>
+				<th style="width:20%">{:L('城市公司')}</th>
+				<th style="width:60%" colspan=2>{:L('项目名称--分期')}</th>
+				<th style="width:20%">{:L('操作')}</th>
+			
+			
+			</tr>
+			</thead>
+			</table>
+			</th>
+		<!-- 	<th class="">{:L('城市公司')}</th>
+	
+			<th colspan=2 class="">{:L('项目名称--分期')}</th>
+			<th class="">{:L('操作')}</th> -->
+			</tr>
+	    </thead>
+	    <tbody>
+			<notempty name="or_pros">
+			<volist name="or_pros" id="vo" key="k">
+			<tr>
+				
+				<td onclick="open_close('{$vo.id}')">
+				
+				{$vo.title}<img class="" id="img_{$vo.id}" style="width:20px;" src="/Application/Admin/Static/images/open.png"> 
+
+				</td>
+				
+				<td style="padding:0;" id="{$vo.id}" class="" >
+				<table class="table table-bordered table-striped ">
+				<volist name="vo._" id="cs">
+				<tr>
+				<td style="width:20%" onclick="open_close('{$cs.id}')">{$cs.title}<img  class="" id="img_{$cs.id}" style="width:20px;" src="/Application/Admin/Static/images/open.png"> 
+				</td>
+				<td style="padding:0;" id="{$cs.id}" class="">
+				<table class="table table-bordered table-striped ">
+					<volist name="cs._" id="pro">
+						<tr>
+							<td style="width:29%"><a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $pro['id']))}">{$pro.name}</a></td>
+							<td style="width:29%">{$pro.StagesName}</td>
+							<td style="width:20%">
+							<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $pro['id']))}">{:L('编辑')}</a>
+					
+							<if condition="$pro['StagesName'] != '暂无分期'">
+							<a target="_Blank" href="{:U('JKProgram/shopCategory?', array('id' => $pro['id'],'stageCode' => $pro['StagesCode']))}" >{:L('楼栋详情')}</a>
+	            			<else />
+	            			<a target="_Blank" href="{:U('JKProgram/shopCategory?', array('id' => $pro['id'],'stageCode' => 'nocode'))}" >{:L('楼栋详情')}</a>
+	            			</if>
+							</td>
+						</tr>
+					</volist>
+				</table>
+				</td>
+				<td id="hide_{$cs.id}" class="hidden">  </td>
+				</tr>
+				</volist>
+				</table>
+				</td>
+				<td id="hide_{$vo.id}" class="hidden">  </td>
+				
+			
+			</tr>
+			</volist>
+			<else/>
+			<td colspan="6" class="text-center">没有项目信息 </td>
+			</notempty>
+		</tbody>
+	</table>
+	
+	<div class="main-title" style="margin-top:30px;">
+        <h2>{:L("无组织架构项目")}</h2>
+    </div>
+	
+	<table id="pro_table" class="table table-bordered table-striped "  >
+	    <thead>
+	        <tr>
+			
+			<th colspan="4">{:L('项目名称')}</th>
+			
+	
+			</tr>
+	    </thead>
+	    <tbody>
+			<notempty name="no_pros">
+			<for start="0" end="count($no_pros)" step="4" >
+			<tr>			
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $no_pros[$i]['id']))}">{$no_pros[$i]['name']}</a>
+				</td>
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $no_pros[$i+1]['id']))}">{$no_pros[$i+1]['name']}</a>
+				</td>
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $no_pros[$i+2]['id']))}">{$no_pros[$i+2]['name']}</a>
+				</td>	
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $no_pros[$i+3]['id']))}">{$no_pros[$i+3]['name']}</a>
+				</td>				
+			</tr>
+			</for>
+			
+			<else/>
+			<td colspan="2" class="text-center">没有项目信息</td>
+			</notempty>
+		</tbody>
+	</table>
+	
+	
+	<div class="main-title" style="margin-top:30px;">
+        <h2>{:L("错误组织架构项目")}</h2>
+    </div>
+	
+	<table id="pro_table" class="table table-bordered table-striped "  >
+	    <thead>
+	        <tr>
+			
+			<th colspan="4">{:L('项目名称')}</th>
+			
+	
+			</tr>
+	    </thead>
+	    <tbody>
+			<notempty name="error_pros">
+			<for start="0" end="count($error_pros)" step="4" >
+			<tr>			
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $error_pros[$i]['id']))}">{$error_pros[$i]['name']}</a>
+				</td>
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $error_pros[$i+1]['id']))}">{$error_pros[$i+1]['name']}</a>
+				</td>
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $error_pros[$i+2]['id']))}">{$error_pros[$i+2]['name']}</a>
+				</td>	
+				<td>			
+				<a target="_Blank" href="{:U('JKProgram/goodsedit?', array('id' => $error_pros[$i+3]['id']))}">{$error_pros[$i+3]['name']}</a>
+				</td>				
+			</tr>
+			</for>
+			
+			<else/>
+			<td colspan="2" class="text-center">没有项目信息</td>
+			</notempty>
+		</tbody>
+	</table>
+	
+	<script>
+		function open_close(id){
+			//切换图片
+			if($("#img_"+id).hasClass('img_hide')){
+				$("#img_"+id).removeClass('img_hide');
+				//显示对应内容
+				$("#"+id).removeClass('hidden');
+				$("#hide_"+id).addClass('hidden');
+				//更换图片
+				$("#img_"+id).attr('src','/Application/Admin/Static/images/open.png');
+			}else{
+				$("#img_"+id).addClass('img_hide');
+				//隐藏对应内容
+				$("#"+id).addClass('hidden');
+				$("#hide_"+id).removeClass('hidden');
+				//更换图片
+				$("#img_"+id).attr('src','/Application/Admin/Static/images/hidden.png');
+			}
+		}
+	</script>
+</block>

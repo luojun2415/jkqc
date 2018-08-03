@@ -1,0 +1,93 @@
+<extend name="Public/base" />
+
+<block name="style">
+<link href="__PUBLIC__/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+
+</block>
+<!-- 管理员{:L("_USER_GROUP_")}新增和编辑页面 -->
+<block name="body">
+	<div class="main-title">
+		<h2>{$user['id']?L('修改'):L('新增')}{:L("用户")}</h2>
+	</div>
+	
+    <div class="with-padding">
+        <form action="" enctype="application/x-www-form-urlencoded" method="POST"
+              class="form-horizontal">
+              <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("用户登陆账号")}</label>
+                <div class="controls">
+                    <input id="auth-title"  <if condition="$user['id']"> readonly </if> type="text" name="name" class="text input-large  form-control form-input-width" value="{$user.name}"/>
+                </div>
+            </div>
+              <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("用户真实姓名")}</label>
+                <div class="controls">
+                    <input id="auth-title" type="text" name="username" class="text input-large  form-control form-input-width" value="{$user.username}"/>
+                </div>
+            </div>
+               <!-- 添加上级角色 --> 
+            <div class="form-item">
+            	<label for="auth-title" class="item-label">所属组织架构：</label>
+            	<div class="portlet light bordered ">
+		                 
+	                 <div class="portlet-body">
+	                     <div id="tree_1" class="tree-demo">
+	                         <ul>	                             
+	                             <php>$nodehtml;nodeList($nodeList,$nodehtml);echo $nodehtml;</php>
+	                         </ul>
+	                     </div>
+	                 </div>
+	             </div>
+                
+            </div>
+              <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("所属部门 ")}</label>
+                <div class="controls">
+                    <input id="auth-title"  type="text" name="department" class="text input-large  form-control form-input-width" value="{$user.department}"/>
+                </div>
+            </div>
+              <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("职位")}</label>
+                <div class="controls">
+                    <input id="auth-title" type="text" name="position" class="text input-large  form-control form-input-width" value="{$user.position}"/>
+                </div>
+            </div>
+             <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("联系电话")}</label>
+                <div class="controls">
+                    <input id="auth-title" type="text" name="mobile" class="text input-large  form-control form-input-width" value="{$user.mobile}"/>
+                </div>
+            </div>
+             <div class="form-item">
+                <label for="auth-title" class="item-label">{:L("用户密码 （不修改密码时留空）")}</label>
+                <div class="controls">
+                    <input id="auth-title" type="text" name="password" class="text input-large  form-control form-input-width" value="{$user.password}"/>
+                </div>
+            </div>
+         
+    
+            <div class="form-item">
+            <input type="hidden" name="id" value="{$user.id}" />
+              <input type="hidden" name="auth_id" id="auth_id" value="{$auth_id}" />
+                <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:L("_SURE_WITH_SPACE_")}</button>
+                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</button>
+            </div>
+        </form>
+    </div>
+</block>
+<block name="script">
+<script src="__PUBLIC__/assets/global/plugins/jstree/dist/jstree.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__/assets/pages/scripts/ui-tree.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+	function mynode(id){
+		$('#auth_id').val(id);
+		setTimeout("update_title()",1000);			
+	}
+	function update_title(){
+		var text=$(".jstree-clicked").text();
+		$("input[name='department']").val(text);
+	}
+</script>
+
+</block>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{$meta_title}|{:L('_SNS_BACKSTAGE_MANAGE_')}</title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+	
+		
+	<!--zui-->
+    <link rel="stylesheet" type="text/css" href="__ZUI__/css/zui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__CSS__/admin.css" media="all">
+    <link rel="stylesheet" type="text/css" href="__CSS__/ext.css" media="all">
+    <!--zui end-->
+    <link rel="stylesheet" type="text/css" href="__CSS__/module.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/style.css" media="all">
+    
+	<link href="__ZUI__/lib/chosen/chosen.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="__JS__/kanban/kanban.css" media="all">
+    
+    <link href="__PUBLIC__/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    
+  </head>
+  <body>
+  <div class="qxgl" >
+		<!-- 标题栏 -->
+	
+		<div class="main-title">
+			<h2>{:L('用户组管理')}</h2>
+		</div>
+	
+	    <div class="tools auth-botton with-padding">
+	        <a id="add-group" onclick="addgroup1()" class="btn">{:L('_ADD_WITH_SPACE_')}</a>
+	        <!-- <a class="btn"  onclick="addgroup1()">{:L('新增供应商')}</a> -->
+	        <a url="{:U('changestatus',array('method'=>'resumeGroup'))}" class="btn ajax-post" target-form="ids" >{:L('_ENABLE_WITH_SPACE_')}</a>
+	        <a url="{:U('changestatus',array('method'=>'forbidGroup'))}" class="btn ajax-post" target-form="ids" >{:L('_DISABLE_WITH_SPACE_')}</a>
+	        <a  url="{:U('changestatus',array('method'=>'deleteGroup'))}" class="btn ajax-post confirm btn-danger" target-form="ids" >{:L('_DELETE_WITH_SPACE_')}</a>
+	        &nbsp; &nbsp; &nbsp; &nbsp;
+	        <!-- <a class="btn" href="{:U('Admin/menu/index')}">{:L('_MENU_BG_MANAGER_')}</a>
+	        <a class="btn btn-success" href="{:U('Admin/menu/add')}">{:L('_MENU_NEW_')}</a>
+	        <a class="btn" href="{:U('addNode')}">{:L('_AUTH_FG_NEW_')}</a> -->
+	    </div>
+	    
+		<!-- 数据列表 -->
+		<div class="col-md-9" id="userfrm">
+		
+		<table class="table table-bordered table-striped ">
+	    <thead>
+	        <tr>
+			<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+			<th class="">{:L('_USER_GROUP_')}</th>
+			<th class="">{:L('简称')}</th>
+	
+			<th class="">{:L('_STATUS_')}</th>
+			<th class="">{:L('_OPERATE_')}</th>
+			</tr>
+	    </thead>
+	    <tbody>
+			<notempty name="_list">
+			<volist name="_list" id="vo">
+			<tr>
+	            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}" /></td>
+
+				 <td><a onclick="editgroup(this)" url="{:U('AuthManager/createOthergroup?id='.$vo['id'])}">{$vo.title}</a> </td>
+
+				<td><span>{$vo.short_title}</span></td>
+	
+	
+				
+				<td>
+					<if condition="$vo['status'] eq -1">
+						删除
+					<elseif condition="$vo['status'] eq 0"/>禁用
+					<else />正常 </if>
+				</td>
+				<td><eq name="vo.status" value="1">
+					<a url="{:U('AuthManager/changeStatus?method=forbidGroup&id='.$vo['id'])}" class="ajax-get">{:L('_DISABLE_')}</a>
+					<else/>
+					<a url="{:U('AuthManager/changeStatus?method=resumeGroup&id='.$vo['id'])}" class="ajax-get">{:L('_ENABLE_')}</a>
+					</eq>
+	<!-- 修改内容开始 -->
+					<a url="{:U('AuthManager/changeStatus?method=deleteGroup&id='.$vo['id'])}" class="confirm ajax-get">{:L('_DELETE_')}</a>
+<!-- 	修改内容结束 -->
+	                </td>
+			</tr>
+			</volist>
+			<else/>
+			<td colspan="6" class="text-center"> {:L('_ADMIN_USER_EMPTY_')} </td>
+			</notempty>
+		</tbody>
+	    </table>
+	
+		</div>
+	    <div class="with-padding">
+	        {$_page}
+	    </div> 
+	
+</div>
+</body>
+	  <script type="text/javascript" src="__PUBLIC__/js/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="__JS__/jquery.mousewheel.js"></script>
+  
+
+<!--zui-->
+<script type="text/javascript" src="__JS__/common.js"></script>
+<script type="text/javascript" src="__JS__/com/com.toast.class.js"></script>
+<script type="text/javascript" src="__ZUI__/js/zui.js"></script>
+<script type="text/javascript" src="__ZUI__/lib/migrate/migrate1.2.js"></script>
+<!--zui end-->
+
+<script type="text/javascript" src="__JS__/kanban/kanban.js"></script>
+
+<script src="__ZUI__/lib/chosen/chosen.js"></script>
+<script type="text/javascript">
+  
+  $(".addgroup").click(function(){
+	  parent.location.href=$(this).attr("src");
+  });
+ 
+  function changeuser(type){
+	  //获取已选择的用户
+	  var chk_value =[]; 
+	  $('input[name="id[]"]:checked').each(function(){ 
+	  	chk_value.push($(this).val()); 
+	  }); 
+	  //alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value); 
+	
+	  window.location.href ="/index.php?s=/admin/user/changestatus/method/"+type+"/id/"+chk_value;
+  }
+
+  function addgroup(){
+
+	  parent.location.href="/index.php?s=/admin/AuthManager/createGroup";
+  }
+  
+  function editgroup(that){
+	  var src = $(that).attr('url');
+	  parent.location.href=src;
+  }
+  
+  function addgroup1(){
+
+	  parent.location.href="/index.php?s=/admin/AuthManager/createOtherGroup";
+  }
+  </script>

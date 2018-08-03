@@ -1,0 +1,92 @@
+<html class="device-desktop screen-desktop"><head>
+    <meta charset="UTF-8">    
+</head>
+<body style="margin: 10 200px;">
+<volist name="data" id="list">
+<p style="margin-left:0;text-indent:0;text-align:center">
+    <strong><span style=";font-family: 宋体;font-size: 24px;font-family:宋体">监理工程师通知单</span></strong>
+</p>
+
+<p style="margin-right:9px;margin-left:9px;text-autospace:ideograph-numeric;text-align:justify;text-justify:inter-ideograph">
+    <span style=";font-family:宋体;font-size:19px"><span style="font-family:宋体">工程名称：{$list[0]['ownid']}</span> 
+     &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style="font-family:宋体;">编号：</span></span>
+</p>
+
+<table>
+    <tbody>
+        <tr class="firstRow">
+            <td valign="top" style="margin: 20px;border: 1px solid black;word-break: break-all;">
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-align: justify;">
+                    <span style="font-size: 19px; font-family: 宋体;">致：{$list[0]['target']}</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;text-indent: 37px;">                    
+                    <span style="font-size: 21px; font-family: 宋体;">事由：</span>
+                    <span style="font-size: 19px; font-family: 宋体;">关于{$list[0]['ownid']}工程质量事宜</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-indent: 37px;">
+                    <span style="font-size: 21px; font-family: 宋体;">内容：
+                    	</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;text-indent: 37px;">
+                    <span style="font-family: 宋体; font-size: 19px;">
+                    	经我部监理人员现场检查发现，贵司承建的{$list[0]['ownid']}存在以下质量问题：</span>
+                </p>
+                <volist name="list" id="vo">
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-indent: 37px;">
+                    
+                    
+                    <span style="font-size: 19px; font-family: 宋体;">
+                    	{$key+1}、整改位置:{$vo['project_ids']}&nbsp;整改项:{$vo['option_id']}<br />
+                    	整改信息:{$vo['info']}</span>
+                    	
+                </p></volist>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;text-indent: 37px;">
+                    <span style="font-family: 宋体; font-size: 19px;">
+					现要求贵司立即对以上不符合要求的工序进行整改，整改合格后，报我监理部复查。</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;">
+                    <span style="font-family: 宋体; font-size: 19px;">&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;">
+                    <span style="font-family: 宋体; font-size: 19px;">&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;">
+                    <span style="font-family: 宋体; font-size: 19px;">&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px;">
+                    <span style="font-family: 宋体; font-size: 19px;">&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-align: right;">
+                    <span style="font-size: 19px; font-family: 宋体;">项目监理机构：</span>
+					<span style="text-decoration: underline; font-family: 宋体; font-size: 19px;">
+					&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-align: right;">
+                    <span style="font-family: 宋体; font-size: 19px;">总/专业监理工程师：</span>
+                    <span style="text-decoration: underline; font-family: 宋体; font-size: 19px;">
+					&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span>
+                </p>
+                <p style="margin-right: 9px; margin-left: 9px; line-height: 25.6px; text-align: right;">
+                    <span style="font-size: 19px; font-family: 宋体;">日期：</span>
+                    <span style="text-decoration: underline; font-family: 宋体; font-size: 19px;">
+                    {$vo['create_time']} &nbsp; &nbsp; &nbsp;&nbsp;</span>
+                </p>
+                <p>
+                    <span style="text-decoration: underline; font-family: 宋体; font-size: 19px;"><br></span>
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <span style=";;font-family:宋体;font-size:19px;font-family:宋体">此表一式三份，甲方、施工单位与监理方各一份</span>
+</p>
+</volist>
+<volist name="apath" id="path">
+<notempty name="path"><img src="{$path}" style="width: 100%"><br><br></notempty>
+
+</volist>
+
+</body></html>

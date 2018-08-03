@@ -1,0 +1,172 @@
+<html class="device-desktop screen-desktop"><head>
+    <meta charset="UTF-8">   
+    <style>
+
+		td{
+			margin: 20px;border: 0px solid black;word-break: break-all;
+		}
+		span{
+			font-family: 宋体;
+			font-size:19px;
+		}
+		p{
+		margin-right:9px;margin-left:9px;
+		}
+ 	</style>
+</head>
+<body style="margin: 10 200px;">
+<volist name="data" id="list">
+<p style="margin-left:0;text-indent:0;text-align:center">
+    <strong><span style="font-size: 24px;font-family:宋体">监理通知单</span></strong>
+</p>
+<p style="margin-left:0;text-indent:0;text-align:center">（监理[ {$year} ]通知单&nbsp;&nbsp;&nbsp;&nbsp;号）</p>
+<p style="text-autospace:ideograph-numeric;text-align:justify;text-justify:inter-ideograph">
+    <span><span>工程名称：{$list[0]['ownid']}</span> 
+     </span>
+</p>
+
+<table style="margin:0 auto" border=1>
+
+    <tbody>
+        <tr class="firstRow">
+            <td valign="top">
+                <p style=" line-height: 25.6px; text-align: justify;">
+                    <span >致：{$list[0]['target']}</span>
+                </p>
+                <p style=" line-height: 25.6px;text-indent: 37px;">                    
+                    <span style="font-size: 21px; ">事由：</span>
+                    <span >关于{$list[0]['ownid']}工程质量事宜</span>
+                </p>
+                <p style=" line-height: 25.6px; text-indent: 37px;">
+                    <span style="font-size: 21px; ">内容：
+                    	</span>
+                </p>
+                <p style=" line-height: 25.6px;text-indent: 37px;">
+                    <span>
+                    	经我部监理人员现场检查发现，贵司承建的{$list[0]['ownid']}存在以下质量问题：</span>
+                </p>
+                <volist name="list" id="vo">
+                <p style=" line-height: 25.6px; text-indent: 37px;">
+                    
+                    
+                    <span>
+                    	{$key+1}、整改位置:{$vo['project_ids']}&nbsp;整改项:{$vo['option_id']}<br />
+                    	</span>
+                    <span style="text-indent: 37px;margin-lfet:37px;">
+                    	整改信息:{$vo['info']}
+                    </span>
+                </p></volist>
+                <p style=" line-height: 25.6px;text-indent: 37px;">
+                    <span>
+					现要求贵司立即对以上不符合要求的工序进行整改，整改合格后，报我监理部复查。</span>
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                
+                <p style=" line-height: 25.6px; text-align: left;">
+                    <span>专业监理工程师：（签字）</span>
+                   
+                </p>
+                <p style=" line-height: 25.6px; text-align: right;">
+                   
+                    <span style="  font-size: 19px;">
+                    年 &nbsp; &nbsp;月 &nbsp;&nbsp;日</span>
+                </p>
+               <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+            </td>
+        </tr>
+        <tr>
+        	<td valign="top">
+         
+              
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                
+                <p style=" line-height: 15px; text-align: left;">
+                    <span>总监理工程师：</span>
+                   
+                </p>
+                 <p style="margin-left:5px; line-height: 25.6px; text-align: left;">
+                    <span>（签字、加盖执业印章）:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span>项目监理机构（盖章）：</span>
+                </p>
+                <p style=" line-height: 25.6px; text-align: right;">
+                   
+                    <span style="  font-size: 19px;">
+                    年 &nbsp; &nbsp;月 &nbsp;&nbsp;日</span>
+                </p>
+               <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+            </td>
+        </tr>
+         <tr>
+        	<td valign="top">
+         
+              
+      
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                
+                <p style=" line-height: 25.6px; text-align: left;">
+                    <span> 
+                    	我方于<span style="text-decoration: underline;">
+					&nbsp; &nbsp;</span>年  <span style="text-decoration: underline;">
+					&nbsp; &nbsp;</span>月  <span style="text-decoration: underline;">
+					&nbsp; &nbsp;</span>日收到《监理通知单》（监理[ {$year} ]通知单&nbsp;&nbsp;&nbsp;&nbsp;号），并按要求整改完善。</span>
+                   
+                </p>
+                <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+                 <p style=" line-height: 15px; text-align: left;">
+                    <span>施工单位项目负责人（签字）:</span>
+                  
+                </p>
+                <p style="margin-left:5px; line-height: 25.6px; text-align: left;">
+                    <span>（签字、加盖执业印章）:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span> 施工项目管理机构（盖章）：</span>
+                </p>
+                <p style=" line-height: 25.6px; text-align: right;">
+                   
+                    <span style="  font-size: 19px;">
+                    年 &nbsp; &nbsp;月 &nbsp;&nbsp;日</span>
+                </p>
+               <p style=" line-height: 25.6px;">
+                    <span>&nbsp;</span>
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p style="text-align:left">
+    <span style="font-size:21px;font-weight:bold">重庆市建设工程质量监督总站监制</span>
+</p>
+<p style="text-align:left">
+    <span style="font-size:21px;font-weight:bold">重庆市城市建设档案馆监制</span>
+</p>
+</volist>
+<volist name="apath" id="path">
+<notempty name="path"><img src="{$path}" style="width: 100%"><br><br></notempty>
+
+</volist>
+
+</body></html>

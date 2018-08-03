@@ -1,0 +1,80 @@
+
+<style>
+    .limitheght{
+        height:500px;
+    }
+
+    .modal-dialog{
+
+        width:900px;
+    }
+
+    .usersel{
+        background: #beebff;
+    }
+</style>
+<div id='selectpro' action="/index.php?s=/admin/auth_manager/selectpro">
+
+    <volist name="data" id="vo" key="k">
+        <div style="border-bottom: 1px solid #EFEFEF;">
+            <div class="list_item <if condition="$k eq 1">usersel</if>" id="item{$k}" onclick="oncheck({$k})" style="height: 80px;">
+
+            <div class="status"><b>
+                <span style="float: left;font-size: 24px;margin-left: 30px;">{$vo.vendorName}</span></b>
+                <span style="color: blue;">{$vo.registrationStatus}</span></div><br>
+            <div class="information col-md-12" style="float: left;">
+                <div class="information_code col-md-5" style="float: left;">
+                    <i class="fa fa-info-circle"></i>统一社会信用代码 :
+                    <span class="g3">{$vo.uscCode}</span></div>
+                <div class="information_user col-md-3" style="float: left;">
+                    <i class="fa fa-user"></i>法定代表人 :
+                    <span class="g3">{$vo.legalPerson}</span></div>
+                <div class="information_date col-md-4" style="float: left;">
+                    <i class="fa fa-calendar"></i>成立日期 :
+                    <span class="g3">{$vo.establishDate}</span></div>
+            </div>
+            <input type="hidden" id="mCod" value="{$vo.mdmCode}" />
+            <input type="hidden" id="mName" value="{$vo.vendorName}" />
+        </div>
+</div>
+</volist>
+
+<div style="margin-top: 10px;">
+    <a class="btn btn-primary" onclick="onsure()">确定</a>
+    <a onclick="$('.close').click();" class="btn btn-default">{:L("_CANCEL_")}</a>
+</div>
+
+
+</div>
+
+<script type="text/javascript">
+    var slist = '<?php echo urlencode(json_encode($data));?>';
+    var rdata = eval(decodeURIComponent(slist));
+
+    var mykey=0;
+    function onsure(){
+        target=$('#selectpro').attr('action');
+        query="data="+ JSON.stringify(rdata[mykey]);
+        console.log(rdata);
+        console.log(target);
+        console.log(query);
+        $.post(target, query).success(function (data) {
+            //updateAlert(data.info, 'success');
+        });
+
+        var marCode=$('.usersel #mCod').val();
+        var marName=$('.usersel #mName').val();
+        $('#mid').val(marCode);
+        $('#auth-title').val(marName);
+        $('.close').click();
+    }
+
+    function oncheck(id){
+        $('.list_item').removeClass("usersel");
+        $('#item'+id).addClass("usersel");
+        mykey=id-1;
+    }
+
+
+</script>
+

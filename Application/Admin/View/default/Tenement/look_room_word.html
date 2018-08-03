@@ -1,0 +1,259 @@
+<html class="device-desktop screen-desktop ">
+
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<style>
+.main-title h2 {
+	font-size: 14px;
+}
+
+.invoice-head{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+	font-weight: bold;
+}
+.invoice-heads{
+	height:50px;
+	line-height:50px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-headss{
+	height:200px;
+	line-height:200px;
+	font-size:14px;
+	text-align: center;
+	border-bottom: 1px solid #C6C6C6;
+	font-weight: bold;
+	padding: 0px;
+	border-left:1px solid #C6C6C6;
+	border-right:1px solid #C6C6C6;
+}
+.invoice-heads .col-xs-7{
+	padding: 0px;
+}
+.invoice-heads .col-xs-5{
+	padding: 0px;
+}
+.invoice-heads .col-xs-3{
+	padding: 0px;
+}
+.invoice-heads .col-xs-9{
+	padding: 0px;
+}
+.invoice-heads .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.invoice-headss .inv-address{
+	text-align: left;
+	padding-left:15px;
+}
+.col-xs-12{
+	padding:0px;
+}
+</style>
+    <link href="{$url}Public/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link type="text/css" rel="stylesheet" href="{$url}Public/js/ext/magnific/magnific-popup.css"/>
+<body>
+	
+    <div class="tools" onclick="ex_room_word()">
+        <button id="btn-html2canvas">导出</button>
+     </div>
+
+	<div style="padding:0 0px;" id="content" style="height:auto;">
+	<div class="col-xs-12 invoice-content-2 bordered" id="main" style="border-top:1px solid #C6C6C6;">
+    	<div class="invoice-head">
+	        <div class="col-xs-12">
+	       		 项目：{$rooms[0][name]}
+	            <!-- <div >                  
+	                <h3 class="uppercase">项目：{$data['ownid']}</h3>
+	            </div> -->
+	        </div>
+              <!--  <div class="col-xs-3">
+               <br>
+                   <span class=""> 问题提交人:{$data['authid']}</span>
+               </div> -->
+		</div>
+		<div class="col-xs-12 invoice-heads">
+      		<div class="invoice-title uppercase" style="float:left;width:10%;border-right: 1px solid #C6C6C6;">问题位置</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:50%;border-right: 1px solid #C6C6C6;">{$rooms[0][position]}</div>
+      		<div class="invoice-title uppercase" style="float:left;width:15%;border-right: 1px solid #C6C6C6;">验收阶段</div>
+      		<div class="invoice-desc inv-address" style="float:left;width:25%;">0</div>
+		</div>
+        <div class="col-xs-12 invoice-heads" style="height:auto;">   
+			<div class="invoice-title uppercase" style="width:10%;height:auto;float:left;border-right: none;">&ensp;</div>
+            
+            <div class="invoice-desc inv-address" id="img_html" style="width:90%;height:auto;float:left;border-left: 1px solid #C6C6C6;position:relative;right:1px;">
+            	<div id="problems"></div>
+             	<img id="houseimg" style="display:none;" src="{$house_picture_url}"/> 
+            	<canvas id="myCanvas"></canvas>
+            </div>
+		</div>
+		
+		<div class="col-xs-12 invoice-heads">   
+			<div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">问题编号</div>
+            <!-- <div class="invoice-desc inv-address" style="width:85%;float:left;">aaaa</div> -->
+            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">检查项目</div>
+            <div class="invoice-title uppercase" style="width:35%;float:left;border-right: 1px solid #C6C6C6;">问题描述</div>
+            <div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">检查人</div>
+            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">检查时间</div>
+            <div class="invoice-title uppercase" style="width:15%;float:left;">责任单位</div>
+		</div>
+		<foreach name="rooms" item="v" key="k">
+			<!-- <if condition="$v[problem_id]"> -->
+			<div class="col-xs-12 invoice-heads">
+				<div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">{$k+1}</div>
+	            <!-- <div class="invoice-desc inv-address" style="width:85%;float:left;">aaaa</div> -->
+	            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">{$v[check_item]}</div>
+	            <div class="invoice-title uppercase" style="width:35%;float:left;border-right: 1px solid #C6C6C6;">{$v[problem_describe]}</div>
+	            <div class="invoice-title uppercase" style="width:10%;float:left;border-right: 1px solid #C6C6C6;">{$v[submit_user]}</div>
+	            <div class="invoice-title uppercase" style="width:15%;float:left;border-right: 1px solid #C6C6C6;">{$v[submit_time]}</div>
+	            <div class="invoice-title uppercase" style="width:15%;float:left;">{$v[auth_title]}</div>
+            </div>
+            <!-- </if> -->
+		</foreach>
+
+       </div>
+       </div>
+       <img src="" id="imgId"> 
+       <input type="hidden" id="house_picture_url" value="{$house_picture_url}" />
+       <input type="hidden" id="point_arr" value="{$coordinates}" />
+ 	<script type="text/javascript" src="{$url}Public/js/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="/Application/Admin/Static/js/html2canvas/dist/html2canvas.js"></script>
+	<script type="text/javascript" src="/Application/Admin/Static/js/jsPDF/dist/jspdf.min.js"></script>
+	<script type="text/javascript" src="{$url}Public/js/ext/magnific/jquery.magnific-popup.min.js"></script>
+	<script>
+		var url= "{$house_picture_url}";
+		//alert(url);
+		var points_str="{$coordinates}";
+		//var points_str="0,0|300,400";
+		//alert(point_str);
+		//add by hubin on 2017-6-21 标绘问题点（支持多个），坐标格式"x1,y1|x2,y2..."
+		var house = document.getElementById("houseimg");
+		//户型图左上角坐标
+		var imgX = house.offsetLeft;
+		var imgY = house.offsetTop; 
+	
+		//console.log("imgX="+imgX+",imgY="+imgY);
+		if(points_str.length>0){
+			var points_array = points_str.split("|");
+			//只有一个点
+			for(var i=0;i<points_array.length;i++){
+				var point = points_array[i].split(",");
+				//标绘问题点
+				drawPoint(point,i+1);
+				//alert("执行这里111！");
+			}
+		}			
+		var board="";
+		var canvas, board, myImage;
+		
+		drawcanvas("{$house_picture_url}");
+		function drawcanvas(url){		
+			
+			canvas=document.getElementById("myCanvas");
+			board=canvas.getContext("2d");			
+		
+			canvas.height = screen.width;
+			canvas.width = screen.width;
+			board.lineWidth = 1;
+			board.strokeStyle = "#0000ff";
+			//填充处理图像
+			myImage =new Image();			
+			//myImage.crossOrigin = "anonymous";
+			myImage.src = url;
+			imgsrc=url;
+			//初始化标点事件
+			//dowithPoint();
+			
+			myImage.onload = function () { 
+				//drawImage();
+				canvas.height = myImage.width+10;
+				canvas.width = myImage.width+10;				
+	        	board.drawImage(myImage, 0, 0,myImage.width,myImage.height);   
+				//canvas.width = myImage.width;
+	           //doWithZoom();
+	           //画布转图片
+	          //alert(1);
+	            var imgData = canvas.toDataURL("image/png");  
+	            alert(imgData);
+	            $("#imgId").attr("src",imgData);
+	        }  
+		}
+		function convertCanvasToImage(canvas) {
+			var image = new Image();
+			image.src = canvas.toDataURL("image/png");
+			return image;
+		}
+		/**
+		 * 标绘问题点
+		 * add by hubin on 2017-6-21
+		 */
+		function drawPoint(point,desc){
+			if(point.length<2){
+				alert("问题点'"+desc+"'位置信息有误，请联系系统管理员！");
+				return;
+			}
+			var x = imgX + parseFloat(point[0]);
+			var y = imgY + parseFloat(point[1]);
+			//console.log("x="+x+",y="+y);
+			var divbug = document.getElementById("problems");
+			divbug.innerHTML = divbug.innerHTML + "<div style='position:absolute;"+"left:"+x+"px;top:"+y+"px;"+
+			"width:16px;height:16px;background-color:#F00;border-width:2px;border-radius:8px;-webkit-border-radius:8px;'>"+
+	         "<span style='height:16px; line-height:16px; display:block; color:#FFF; text-align:center'>"+desc+"</span></div>";
+		}
+		
+		/**
+		 * 导出问题详情页word
+		 * tanjiewen 2017-6-22 1:49
+		 */
+		function ex_room_word(){
+			
+			var yuanma = $("#img_html").html();			
+			var room_name="{$rooms[0][position]}";
+			var room_id ="{$rooms[0][room_id]}";
+			//alert(yuanma);return;
+		 	$.post("/index.php?s=/admin/Tenement/ex_room_word",{img_html:yuanma,room_name:room_name,room_id:room_id},
+	  				  function(data){
+		 				window.location.href = data;
+	  			},
+	  		"text");  
+		}
+		function ex_room_word1(){			
+		   html2canvas($('#img_html'), {  
+		        height:5000,  
+		        onrendered: function(canvas) {           
+		            var imgData = canvas.toDataURL(); 
+		            var img = new Image();  
+					img.src = imgData;
+					img.onload = function() {
+						drawcanvas(imgData);return;
+					   var doc = new jsPDF('p', 'px','a3');  
+			            //第一列 左右边距  第二列上下边距  第三列是图片左右拉伸  第四列 图片上下拉伸  
+			            doc.addImage(imgData, 'JPEG', -9, 0,650,1500);  
+			            doc.addPage();  
+			            doc.addImage(imgData, 'JPEG', -9, -900,650,1500);  
+			            doc.save('{$rooms[0][position]}详情.pdf');  
+						
+					}
+		         
+		        }  
+		    }); 
+		}
+		
+	</script>
+</body></html>

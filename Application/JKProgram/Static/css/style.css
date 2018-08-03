@@ -1,0 +1,150 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+body {
+  padding: 10px;
+  background-color: #f0f0f0;
+}
+body .aws-absolute {
+  margin-top: -197px;
+  margin-left: -280px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.aws-container {
+  overflow: hidden;
+  border-radius: 6px;
+  font-family: "Open Sans";
+  position: relative;
+  margin: 0px auto;
+  width: 560px;
+  background-color: #4dae50;
+  -moz-box-shadow: 1px 1px 0.5px 0.5px #e1e1e1;
+  -webkit-box-shadow: 1px 1px 0.5px 0.5px #e1e1e1;
+  box-shadow: 1px 1px 0.5px 0.5px #e1e1e1;
+}
+.aws-container .aws-content {
+  padding: 32px;
+}
+.aws-container .aws-content nav {
+  font-size: 16px;
+  margin-bottom: 60px;
+}
+.aws-container .aws-content nav span {
+  color: #87c98a;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.aws-container .aws-content nav span.aws-active {
+  color: #f2f2f2;
+}
+.aws-container .aws-details {
+  height: 100px;
+  background-color: #fefefe;
+  position: relative;
+  overflow: hidden;
+}
+.aws-container .aws-details:after {
+  content: " ";
+  position: absolute;
+  width: 1px;
+  background-color: #e8e8e8;
+  z-index: 1;
+  right: 50%;
+  top: 26px;
+  bottom: 28px;
+}
+.aws-container .aws-details .aws-block-info {
+  padding: 26px 15px 28px;
+}
+.aws-container .aws-details .aws-block-info h3 {
+  margin: 0px 0px 5px;
+  color: #4a4a4a;
+}
+.aws-container .aws-details .aws-block-info h3[data-status] {
+  position: relative;
+}
+.aws-container .aws-details .aws-block-info h3[data-status]:before {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  position: absolute;
+  top: 8px;
+}
+.aws-container .aws-details .aws-block-info h3[data-status] span {
+  padding-left: 22px;
+}
+.aws-container .aws-details .aws-block-info h3[data-status=up]:before {
+  border-bottom: 8px solid #6caa32;
+}
+.aws-container .aws-details .aws-block-info h3[data-status=down]:before {
+  border-top: 8px solid #b35d44;
+}
+.aws-container .aws-details .aws-block-info h5 {
+  margin: 0px;
+  color: #9d9c9c;
+}
+.aws-container .aws-tooltip {
+  -moz-box-shadow: 1px 1px 0.5px 0.5px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 1px 1px 0.5px 0.5px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 0.5px 0.5px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 9px;
+  border-radius: 3px;
+  text-align: center;
+  width: 120px;
+}
+.aws-container .aws-tooltip.aws-for-file {
+  width: 160px;
+}
+.aws-container .aws-tooltip:after {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.8);
+  position: absolute;
+  left: 50%;
+  margin-left: -6px;
+  bottom: -8px;
+}
+.aws-container .aws-tooltip span {
+  display: block;
+}
+.aws-container .aws-tooltip span:nth-child(1) {
+  font-size: 11px !important;
+}
+.aws-container .aws-tooltip span:nth-child(2) {
+  font-size: 13px !important;
+}
+
+.aws-author {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: dimgray;
+  font-family: "Open Sans";
+  font-size: 13px;
+}
+.aws-author:hover a:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background-color: #d8d8d8;
+}
+.aws-author a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+.aws-author .fa {
+  color: #db3131;
+}

@@ -1,0 +1,69 @@
+
+    <table class="table table-bordered table-striped ">
+        <thead>
+		            <tr>
+		                <th class="row-selected row-selected col-md-1"><input class="check-all" type="checkbox"/></th>
+		                <th class="col-md-1">{:L('序号')}</th>
+		                <th class="col-md-2">{:L("登录账号11")}</th>
+		                <th class="col-md-1">{:L('姓名')}</th>
+		                <th class="col-md-2">{:L('部门')}</th>
+		                <th class="col-md-1">{:L("职位")}</th>
+		                <th class="col-md-1">{:L("联系电话")}</th>
+		               
+		                <th class="col-md-1">{:L("_OPERATE_")}</th>
+		                <th class="col-md-1">{:L('_LOGIN_COUNT_')}</th>
+		                <th class="col-md-1">{:L('_LAST_LOGIN_TIME_')}</th>
+		               
+		                <th class="col-md-1">{:L('_STATUS_')}</th>
+		
+		            </tr>
+		            </thead>
+		            <tbody>
+		            <notempty name="_list">
+		                <volist name="_list" id="vo">
+		                    <tr>
+		                        <td class="col-md-1"><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}"/></td>
+		                        <td class="col-md-1">{$vo.num}</td>
+		                        
+		                        <td class="col-md-2"><a href="{:U('Admin/User/addPass',array('id'=>$vo['uid']))}" >{$vo.nickname|op_t}</a></td> 
+		                        <td class="col-md-1">{$vo.username}</td>
+		                        <td class="col-md-2">{$vo.department}</td>
+		                        <td class="col-md-1">{$vo.position}</td>
+		                        <td class="col-md-1">{$vo.mobile}</td>
+		                        <td class="col-md-1">
+		                            <eq name="vo.status" value="1">
+		                                <a href="{:U('User/changeStatus?method=forbidUser&id='.$vo['uid'])}"
+		                                   class="ajax-get">{:L('_DISABLE_')}</a>
+		                                <else/>
+		                                <a href="{:U('User/changeStatus?method=resumeUser&id='.$vo['uid'])}"
+		                                   class="ajax-get">{:L('_ENABLE_')}</a>
+		                            </eq>
+		                            <a href="{:U('AuthManager/group?uid='.$vo['uid'])}" class="authorize">{:L('_ACCREDIT_')}</a>
+		                            <a href="{:U('User/changeStatus?method=deleteUser&id='.$vo['uid'])}"
+		                               class="confirm ajax-get">{:L('_DELETE_')}</a>
+		                            <a href="{:U('User/initPass?id='.$vo['uid'])}"
+		                               class="confirm ajax-get">{:L('_PW_RESET_')}</a>
+		                        </td>
+		
+		
+		
+		                        <td class="col-md-1">{$vo.login}</td>
+		                        <td class="col-md-1"><span>{$vo.last_login_time|time_format}</span></td>
+		                        
+		                        <td class="col-md-1">
+		                        	<if condition="$vo['status'] eq -1">删除
+		                        	<elseif condition="$vo['status'] eq 0"/>禁用
+		                        	<else /> 启用
+		                        	</if>
+		                        </td>
+		
+		
+		
+		                    </tr>
+		                </volist>
+		                <else/>
+		                <td colspan="9" class="text-center">{:L('该用户组无人员信息')}</td>
+		            </notempty>
+		            </tbody>
+    </table>
+

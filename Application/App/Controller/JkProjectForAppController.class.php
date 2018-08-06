@@ -1409,11 +1409,11 @@ class JkProjectForAppController extends Controller
                     $r = M('jk_program')->add($v);
 //                    $registrationids = getRidsFromGroupId($v['target_id']);
 
-                    file_put_contents('push.log', time() . '=================>170976fa8aa6345ae2f' . "\n", FILE_APPEND);
-                    $registrationids = array('170976fa8aa6345ae2f');
-                    $content = "您有新的整改任务，请更新确认";
-                    $ret = $push->send_pub($registrationids, $content, 'program', $v['type']);
-                    pushLog($registrationids, $content, 'program', $v['type'], $ret['code'], $ret['message'], $v['init_id']);
+//                    file_put_contents('push.log', time() . '=================>170976fa8aa6345ae2f' . "\n", FILE_APPEND);
+//                    $registrationids = array('170976fa8aa6345ae2f');
+//                    $content = "您有新的整改任务，请更新确认";
+//                    $ret = $push->send_pub($registrationids, $content, 'program', $v['type']);
+//                    pushLog($registrationids, $content, 'program', $v['type'], $ret['code'], $ret['message'], $v['init_id']);
                 }
                 $r = true;
                 if ($r == false) {

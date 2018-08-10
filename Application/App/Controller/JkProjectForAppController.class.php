@@ -351,7 +351,7 @@ class JkProjectForAppController extends Controller
 
         $check_tasks = $adata['check_tasks'];//任务信息
         $acprogramPoints = $adata['programPoints'];//问题点信息
-        $check_rooms = $adata['check_rooms'];//任务信息房间检查状态
+        $check_rooms = $adata['roominfo'];//任务信息房间检查状态
         file_put_contents('appRequst.log', $jupData . "\n", FILE_APPEND);
 //        exit;
         //echo json_encode($adata);exit;
@@ -456,6 +456,7 @@ class JkProjectForAppController extends Controller
 
         }
         if ($check_rooms && is_array($check_rooms)) {
+            file_put_contents('appRequst.log', "in chechRoom" . "\n", FILE_APPEND);
             $taskId = '';
             $taskIds = array();
             $tmpTaskId = '';
@@ -473,6 +474,7 @@ class JkProjectForAppController extends Controller
             foreach ($taskIds as $t) {
                 $countStatusAll = M('jk_room_check_info')->where("task_id='$t'")->count();
                 $countStatus2 = M('jk_room_check_info')->where("status=2 AND task_id='$t'")->count();
+                $status=0;
                 if ($countStatus2 > 0)
                     $status = 1;
                 if ($countStatusAll == $countStatus2) {
@@ -482,6 +484,7 @@ class JkProjectForAppController extends Controller
                 $rate = round($countStatus2 * 100 / $countStatusAll);
                 M('jk_task')->where("pro_id = '$check_proid' AND id ='$t'")->save(array('rate' => $rate, 'status' => $status));
             }
+            file_put_contents('appRequst.log', M()->getLastsql(). "\n", FILE_APPEND);
         }
 
         $rep['sql'] = M()->getLastsql();
@@ -533,10 +536,33 @@ class JkProjectForAppController extends Controller
                     }
                     $save['last_modify_time'] = $a['last_modify_time'];
                     $result = M('jk_acprogram')->where("problem_id = '$acprogramid'")->save($save);
+
+//                    更新房间检查状态
+                    $taskId=$a['task_id'];
+                    $roomId = $a['room_id'];
+
+                    $data=array();
+                    if($a['problem_status'] ==4||$a['problem_status'] ==5){
+                        $data['status'] = 5;
+                    }
+                    elseif ($a['problem_status'] ==7||$a['problem_status'] ==8){
+                        $data['status'] = 4;
+                    }
+                    else{
+                        $data['status'] = 3;
+                    }
+                    M('jk_room_check_info')->where("task_id='$taskId' AND room_id = $roomId")->save($data);
+                    file_put_contents('appRequst.log',  M('jk_room_check_info')->_sql(). "\n");
                 } else {//不存在进行添加
                     //$a['create_time'] = $updateTime;
                     $result = M('jk_acprogram')->add($a);
+//                    更新房间检查状态
+                    $taskId=$a['task_id'];
+                    $roomId = $a['room_id'];
 
+                    $data=array();
+                    $data['status'] = 3;
+                    M('jk_room_check_info')->where("task_id='$taskId' AND room_id = $roomId")->save($data);
                 }
                 $rep['sql'] = M()->getLastsql();
 //                 if($result==false){
@@ -1551,10 +1577,13 @@ class JkProjectForAppController extends Controller
             $build_id = $flitr['building_id'];
             $option_pid = $flitr['check_item_id'];
             $status = $flitr['status'];
-
+            $room_id = $flitr['room_id'];
             $where .= " AND project_id=$proid ";
             if ($build_id > "") {
                 $where .= " AND building_id IN ($build_id) ";
+            }
+            if ($room_id) {
+                $where .= " AND room_id = $room_id ";
             }
             if ($option_pid > "") {
                 $where .= " AND regional_id IN ($option_pid) ";
@@ -1601,7 +1630,7 @@ class JkProjectForAppController extends Controller
                     $where .= " AND reply_id in(" . $target_id . ")";
 
                 $aImagesdata = M('jk_comment_etx')->where($where)->select();
-                $sql = M('jk_comment_etx')->_sql();
+//                $sql = M('jk_comment_etx')->_sql();
                 $adownData['commentData'] = $boardlist;
                 $adownData['imageData'] = $aImagesdata;
             }
@@ -1609,6 +1638,13 @@ class JkProjectForAppController extends Controller
         }
         elseif ($type == 'check_tasks') {//任务信息
             $where="pro_id = $proid AND state='normal'";
+            $status = $flitr['status'];
+            if($status==1){
+                $where .= " AND status<2";
+            }
+            elseif ($status==2){
+                $where .= " AND status=2";
+            }
             $position_id = $flitr['position_id'] ;
             if($position_id>""){
                 $where .=" AND  position_id in ($position_id) " ;
@@ -2141,7 +2177,8 @@ class JkProjectForAppController extends Controller
 //            $sql= M('jk_check_point')->_sql();
             $adownData['point_data'] = $point_data;
 
-        } elseif ($type == 'measuredProgram') {
+        }
+        elseif ($type == 'measuredProgram') {
             $where = "type=1";
 //            施工单位只查看对应施工单位绑定的楼栋的数据
             if (3 == $flitr['level']) {
@@ -2202,6 +2239,14 @@ class JkProjectForAppController extends Controller
             }
 
         }
+        elseif ($type == 'local_images') {//下载平面图
+            $proID = $flitr['proid'];
+            $lastTime = $flitr['lasttime'];
+            $adata = M('picture')->where("path !='' AND (type='local' OR type='house') AND update_time>='$lastTime' AND projectid = $proID")->order('update_time DESC')->select();
+            $sql = M('picture')->_sql();
+            $totelCount = M('picture')->where("path !='' AND type='local' AND projectid = $proID")->count();
+
+        }
 //        elseif($type=='inspect'){//实测实量数据表
 //        	//获取前两个月的时间错
 //        	$month_time=strtotime("-2 month");
@@ -2243,7 +2288,8 @@ class JkProjectForAppController extends Controller
             $adata = M('jk_program')->where("update_time>='" . $time . "' AND ownid = $proID")->order('create_time DESC')->limit($offset, $count)->select();
             $totelCount = M('jk_program')->where("update_time>='" . $time . "' AND ownid = $proID")->count();
             // echo M()->getLastSql();die;
-        } elseif ($type == 'board') {
+        }
+        elseif ($type == 'board') {
             //获取前两个月的时间错
             $month_time = strtotime("-2 month");
             //如果更新时间小于两个月前的时间戳则只传递两个月前的数据
@@ -2252,7 +2298,8 @@ class JkProjectForAppController extends Controller
             }
             $adata = M('jk_problm_board')->where("update_time>='" . $time . "' AND proID = $proID")->order('create_time DESC')->limit($offset, $count)->select();
             $totelCount = M('jk_problm_board')->where("update_time>='" . $time . "' AND proID = $proID")->count();
-        } elseif ($type == 'images') {//不更新自己上传的图片 AND devicename = ".$deviceId."(uid != $uid OR devicename != ".$deviceId.") AND
+        }
+        elseif ($type == 'images') {//不更新自己上传的图片 AND devicename = ".$deviceId."(uid != $uid OR devicename != ".$deviceId.") AND
             //添加筛选条件不下载已经整改完成的问题对应的图片
             $target_id = "";
             //获取已关闭的问题表的id放入target_id中
@@ -2291,12 +2338,14 @@ class JkProjectForAppController extends Controller
             $adata = M('picture')->where("path !='' AND type!='detail' AND update_time>='" . $time . "' AND projectid = $proID" . $where)->order('update_time DESC')->limit($offset, $count)->select();
             $totelCount = M('picture')->where("path !='' AND type!='detail' AND update_time>='" . $time . "' AND projectid = $proID" . $where)->count();
 
-        } elseif ($type == 'local_images') {//下载平面图
+        }
+        elseif ($type == 'local_images') {//下载平面图
             $adata = M('picture')->where("path !='' AND type='local' AND projectid = $proID")->order('update_time DESC')->limit($offset, $count)->select();
             $sql = M('picture')->_sql();
             $totelCount = M('picture')->where("path !='' AND type='local' AND projectid = $proID")->count();
 
-        } elseif ($type == 'measure') {//更新实测实量任务
+        }
+        elseif ($type == 'measure') {//更新实测实量任务
             //获取前两个月的时间错
             $month_time = strtotime("-2 month");
             //如果更新时间小于两个月前的时间戳则只传递两个月前的数据
@@ -2306,7 +2355,8 @@ class JkProjectForAppController extends Controller
             }
             $adata = M('jk_measuring_tasks')->where("status!=-1 and updatetime>='" . $time . "' AND projectid = $proID ")->order('createtime DESC')->select();
             $totelCount = M('jk_measuring_tasks')->where("status!=-1 and updatetime>='" . $time . "' AND projectid = $proID ")->count();
-        } elseif ($type == 'inspect') {//实测实量数据表
+        }
+        elseif ($type == 'inspect') {//实测实量数据表
             //获取前两个月的时间错
             $month_time = strtotime("-2 month");
             //如果更新时间小于两个月前的时间戳则只传递两个月前的数据

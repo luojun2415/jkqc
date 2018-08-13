@@ -1,0 +1,120 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="main-title">
+        <h2>新增户型配置</h2>
+    </div>
+    <div class="with-padding">
+        <div class="tab-wrap" style="margin-bottom: 5px">
+            <ul class="nav nav-secondary group_nav">
+            </ul>
+        </div>
+        <form action="/index.php?s=/admin/tenement/edithouse.html" method="post" class="form-horizontal">
+            <label class="item-label">编号
+            </label>
+            <div class="controls ">
+                <input type="hidden" name="id" value="" class="text input-large form-control"
+                       style="width: 400px" placeholder="无需填写" readonly/>
+                <p class="lead" style="word-break:break-word"></p>
+            </div><label class="item-label">户型名称
+            <span class="check-tips">（选择户型名称）</span>
+        </label>
+            <div class="controls ">
+                <select name="type_id" class="form-control" style="width:auto;">
+                    <option value="1"
+                    >一室一厅</option>
+                    <option value="2"
+                    >两室一厅</option>
+                </select>
+            </div><label class="item-label">户型描述
+        </label>
+            <div class="controls ">
+                <input type="text" name="remark" value="" class="text input-large form-control" style="width: 400px"/>
+            </div><label class="item-label">装修类型
+            <span class="check-tips">（选择装修类型）</span>
+        </label>
+            <div class="controls ">
+                <select name="check_type" class="form-control" style="width:auto;">
+                    <option value="0"
+                            selected>毛坯房</option>
+                    <option value="1"
+                    >精装修</option>
+                </select>
+            </div><label class="item-label">上传户型图
+        </label>
+            <div class="controls ">
+                <div class="controls">
+                    <div id="upload_single_image_image_code" style="padding-bottom: 5px;">选择图片</div>
+                    <input class="attach" type="hidden" name="image_code" value=""/>
+                    <div class="upload-img-box">
+                        <div class="upload-pre-item popup-gallery">
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $(function () {
+                        var uploader_image_code= WebUploader.create({
+                            // 选完文件后，是否自动上传。
+                            auto: true,
+                            // swf文件路径
+                            swf: 'Uploader.swf',
+                            // 文件接收服务端。
+                            server: "/index.php?s=/admin/file/uploadpicture/session_id/os83624po6vabb6fmg4fnetqt2.html",
+                            // 选择文件的按钮。可选。
+                            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                            pick: '#upload_single_image_image_code',
+                            // 只允许选择图片文件
+                            accept:{
+                                title: 'Images',
+                                extensions: 'gif,jpg,jpeg,bmp,png',
+                                mimeTypes: 'image/jpg,image/jpeg,image/png,image/bmp,image/gif'
+                            }
+                        });
+
+                        uploader_image_code.on('fileQueued', function (file) {
+                            uploader_image_code.upload();
+                        });
+
+                        /*上传成功**/
+                        uploader_image_code.on('uploadSuccess', function (file, data) {
+                            if (data.status) {
+                                $("[name='image_code']").val(data.id);
+                                $("[name='image_code']").parent().find('.upload-pre-item').html(
+                                    ' <div class="each"><a href="'+ data.path+'" title="点击查看大图"><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                     '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">删除</div></div>'
+                                );
+                                uploader_image_code.reset();
+                            } else {
+                                updateAlert(data.info);
+                                setTimeout(function () {
+                                    $('#top-alert').find('button').click();
+                                    $(that).removeClass('disabled').prop('disabled', false);
+                                }, 1500);
+                            }
+                        });
+                    })
+                </script>
+            </div>
+            <br/>
+            <div class="form-item">
+                <button class="btn submit-btn ajax-post btn-success" id="submit" type="submit" target-form="form-horizontal">确定</button>  &nbsp;<button onclick="javascript:history.back(-1);return false;" class="btn btn-return">返回</button>  &nbsp;
+            </div>
+        </form>
+    </div>
+</block>
+
+
+
+<block name="script">
+
+    <link href="/Public/js/ext/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="/Public/js/ext/webuploader/js/webuploader.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+        });
+
+    </script>
+
+</block>

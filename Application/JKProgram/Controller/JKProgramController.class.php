@@ -3354,7 +3354,7 @@ class JKProgramController extends AdminController
         //    $goodsList = M('jk_program')->where($map)->order('create_time desc')->select();
         //else
         $goodsList = M('jk_program')->where($map)->order('create_time desc')->page($page, $r)->select();
-        // dump(M()->getLastSql());
+//         dump(M()->getLastSql());
         $totalCount = M('jk_program')->where($map)->count();
         $builder = new AdminListBuilder();
         $builder->title('项目问题列表');

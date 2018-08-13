@@ -502,6 +502,8 @@ class TenementController extends AdminController{
                 $this->error($title.L('_FAIL_').L('_EXCLAMATION_'));
             }
         } else {
+            $this->display();
+            return;
             $builder = new AdminConfigBuilder();
 
             $category='';
@@ -515,7 +517,7 @@ class TenementController extends AdminController{
                 ->keySelect('type_id', L('户型名称'), L('选择户型名称'), $opt)
                 ->keyText('remark', L('户型描述'))
                 ->keySelect('check_type', L('装修类型'), L('选择装修类型'), array(0=>'毛坯房',1=>'精装修'))
-                ->keyMultiImage('image_code','上传户型图','',10)
+                ->keySingleImage('image_code','上传户型图','',10)
                 ->data($category)
                 ->buttonSubmit(U('Tenement/edithouse'))->buttonBack()->display();
 
@@ -1361,6 +1363,47 @@ class TenementController extends AdminController{
      	echo $room_id."xiangqing.doc";
      }
 
+     public function edithousetype($id = 0){
+         $db=M('jk_house_typelist');
+         $title=$id?L('_EDIT_'):L('_ADD_');
+         if (IS_POST) {
+
+             $data = $db->create();
+             $data['project_id'] =  $_SESSION['proId'];
+             if($id>0){
+                 $data['update_time']=time();
+                 $ret = $db->where("id=$id")->save($data);
+             }
+             else{
+                 $data['status']=1;
+                 $data['create_time']=time();
+                 $data['update_time']=time();
+                 $ret = $db->add($data);
+             }
+
+             if ($ret) {
+                 $this->success($title.L('_SUCCESS_').L('_PERIOD_'), U('Tenement/house_typelist'));
+             } else {
+                 $this->error($title.L('_FAIL_').L('_EXCLAMATION_'));
+             }
+         } else {
+
+             $builder = new AdminConfigBuilder();
+
+             $data='';
+             if ($id != 0) {
+
+                 $data = $db->where("id=$id")->find();
+             }
+//            dump($category);
+             $builder->title($title.L('房间类型'))->keyId()
+                 ->keyText('title', L('类型名称'))
+                 ->data($data)
+                 ->buttonSubmit(U('Tenement/edithousetype'))->buttonBack()->display();
+
+         }
+
+     }
 
      public function house_typelist($page=1, $r=20){
          $db=M('jk_house_typelist');

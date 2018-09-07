@@ -26,12 +26,9 @@ class JKMdmController extends Controller{
         //$ws = "http://192.168.9.52:9099/S-MDM4Service/getCode?wsdl";
 //        $this->ws = "http://192.168.9.52:9099/S-MDM4Service/getCode?wsdl";
         $this->ws = "http://192.168.9.48:9090/S-MDM4Service/getCode?wsdl";
-
-        dump(111);
         $this->soap = new \SoapClient ($this->ws);
 
-        dump($this->soap);
-//        exit;
+
 //         dump($this->soap->__getFunctions ());
 //         $ws = "http://218.70.38.34:9090/S-MDM4Service/getCode?wsdl";
 //         $this->soap = new \SoapClient ($ws);
@@ -99,7 +96,7 @@ class JKMdmController extends Controller{
 
         //获取当前时间戳存入文件
         $file_name = "./Uploads/".time().'.txt';
-
+        // file_put_contents('setData.log', $json_data);
         $encode = mb_detect_encoding($json_data, array('ASCII','UTF-8','GB2312','GBK','BIG5'));
 
         if($encode == 'UTF-8'){
@@ -206,12 +203,27 @@ class JKMdmController extends Controller{
 
         $soap = $this->soap;
         //dump($param);
-        file_put_contents('soaptest.log', json_encode($soap));
-        $result = $soap->mdmMasterDataGenCode(array(
-            'masterDateJson'=>$param,
+        // dump( file_get_contents("http://192.168.9.52:9099/S-MDM4Service/getCode?wsdl"));
+        $sendParam=array('masterDateJson'=>$param);
+        try{
+            // dump(11);
+            // // $soap = new \SoapClient ("http://192.168.9.48:9090/S-MDM4Service/getCode?wsdl");
+            // $soap = new \SoapClient("http://192.168.9.52:9099/S-MDM4Service/getCode?wsdl");
 
-        ));
-        file_put_contents('soaptest.log', $result);
+            // dump($soap);
+            // file_put_contents('soaptest.log', $soap);
+            // dump($soap->__getFunctions());
+            // $result = $soap->__soapCall("mdmMasterDataGenCode",$sendParam);
+            $result = $soap->mdmMasterDataGenCode($sendParam);
+            // dump(11);
+            // file_put_contents('soaptest.log', $result);
+
+
+        }
+        catch(SoapFault $e){
+            file_put_contents('soaptesterr.log', $e->getMessage());
+        }
+        // exit;
         return $result;
     }
     /**
@@ -2063,8 +2075,9 @@ class JKMdmController extends Controller{
             $find=M('jk_provider_mdm')->where("Providernumber=".$data['mdmCode'])->find();
             if(!$find){
                 M('jk_provider_mdm')->add($info);
-
+//                file_put_contents('provider_log.log', M('jk_provider_mdm')->_sql());
             }
+//            file_put_contents('provider_log.log', json_encode($info));
             $this->success('新增成功');
             return;
         }
@@ -2091,4 +2104,4 @@ class JKMdmController extends Controller{
         // }
     }
 }
-?>
+

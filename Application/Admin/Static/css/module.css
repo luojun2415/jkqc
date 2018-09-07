@@ -126,8 +126,8 @@
     margin-left: 15px;
     height: 21px;
     vertical-align: middle;
-    background-image: url(../images/tab_sign.png);
-    background-repeat: no-repeat;
+    /*background-image: url(../images/tab_sign.png);*/
+    /*background-repeat: no-repeat;*/
 }
 
 .category .name .msg {
@@ -168,6 +168,25 @@
     background-position: 0 -60px;
 }
 
+/* 四级分类 */
+.category > dl > dd > dl > dd > dl > dd > dl > dt .tab-sign {
+    width: 140px;
+    background-position: 0 -90px;
+    margin-left: 55px;
+}
+
+/* 五级分类 */
+.category > dl > dd > dl > dd > dl > dd > dl > dd> dl > dt .tab-sign {
+    width: 140px;
+    background-position: 0 -90px;
+    margin-left: 105px;
+}
+
+.category > dl > dd > dl > dd >  dl > dd >dl:last-child > dt .tab-sign {
+    background-position: 0 -120px;
+}
+
+
 .category > dl > dd > dl:last-child > dd > dl > dt .tab-sign {
     background-position: 0 -90px;
 }
@@ -177,7 +196,7 @@
 }
 
 .category > dl > dd > dl:last-child > dd > dl:last-child > dt .add-sub-cate {
-    display: none;
+    /*display: none;*/
 }
 
 .category input {

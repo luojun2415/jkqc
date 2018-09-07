@@ -17,6 +17,19 @@ function  getRidsFromGroupId($groupid){
 	}
 	return $regids;
 }
+
+function getChileIds($modle,$pid=0){
+    $retIds=array();
+    $datas=M($modle)->where("pid=$pid")->getField('id',true);
+    if(!$datas){
+        return $pid;
+    }
+    foreach ($datas as $d){
+        $retIds[]=getChileIds($modle,$d);
+    }
+    return implode(',',$retIds);
+}
+
 /**
  * 获取测量总点数
  * @param 不同测量项的对应点数集合 $numarray

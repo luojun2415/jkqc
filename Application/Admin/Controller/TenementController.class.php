@@ -52,7 +52,7 @@ class TenementController extends AdminController{
             
         //列表数据查询
         $que_list = D('JkAcprogram')->relation(true)->where($map)
-        ->field('problem_id,project_id,building_id,unit_id,floor_id,room_id,check_item,problem_describe,contractor_id,submit_user,submit_time,problem_status')
+        ->field('problem_id,project_id,building_id,unit_id,floor_id,room_id,check_item,problem_describe,contractor_id,submit_user,submit_time,problem_status,remark')
         ->order('submit_time desc')
         ->page($page,$r)
         ->select();
@@ -88,6 +88,9 @@ class TenementController extends AdminController{
 	            case 7 :
 	                $v['problem_status'] = '待复核';
 	                break;
+                case 8 :
+                    $v['problem_status'] = '待激活';
+                    break;
             } 
         }
 
@@ -142,6 +145,7 @@ class TenementController extends AdminController{
             array('id'=>5,'value'=>'已作废'),
             array('id'=>6,'value'=>'待审核'),
             array('id'=>7,'value'=>'待复核'),
+            array('id'=>8,'value'=>'待激活'),
         );
         $builder->select(L('状态：'), 'status', 'select', L('选择状态'), '', '', $astatus);
 
@@ -183,7 +187,7 @@ class TenementController extends AdminController{
         ->keyText('check_item',L('检查项'))
         ->keyText('problem_describe',L('问题描述'))
         ->keyText('auth_title',L('整改单位'))
-        ->keyText('submit_user',L('问题提交人'))
+        ->keyText('remark',L('问题提交人'))
         ->keyText('submit_time',L('提交时间'))
         ->keyText('problem_status',L('状态'))
         ->keyDoAction('question_info?id=###','详情');
@@ -230,28 +234,21 @@ class TenementController extends AdminController{
 
         $pro_id = $_SESSION['proId'];
         $map['project_id'] =$pro_id;
-        $goodsList = $db->where($map)->order('sort')->page($page, $r)->select();
+        $goodsList = $db->where($map)->order('id')->page($page, $r)->select();
         $totalCount = $db->where($map)->count();
-
-        $builder = new AdminListBuilder();
-
-        $builder->buttonNew(U('edithouse'));
 
         $project = M('jk_project')->where("id=$pro_id")->find();
         $title='户型配置（'.$project['name'].'）';
         $i=1;
-
+//        dump(M()->_sql());
         foreach ($goodsList as &$v){
             $v['no']=$i;
             $id= $v['id'];
-            $images=M('picture')->where("projectid=$pro_id AND target_id=$id")->field('id')->select();
-            foreach ($images as $k=>$im){
-                $images[$k]['title'] = '户型图'.($k+1);
-            }
+            $images=M('picture')->where("projectid=$pro_id AND id='".$v['image_code']."'")->find();
             $v['_images']=$images;
             $i++;
         }
-//        dump(M('picture')->_sql());
+
 //        dump($goodsList);
 //        $builder->keyText('num', L('序号'))
 //            ->keyText('title', L('名称'))->keyText('remark', L('备注'))
@@ -424,7 +421,8 @@ class TenementController extends AdminController{
         }
         $pro_id = $_SESSION['proId'];
         $type = M('jk_houseimage_data')->where("id=$id")->field('id,title,remark')->find();
-        $typeList = M('jk_house_typelist')->where("status>=0")->getField('id,id,title',true);
+        $remark = $type['remark'];
+        $typeList = M('jk_house_typelist')->where("id in ($remark)")->getField('id,id,title',true);
         if(IS_POST){
             $points=$_POST['points'];
             $tid=$_POST['tid'];
@@ -452,10 +450,13 @@ class TenementController extends AdminController{
             }
             return;
         }
-
+        $points =  M('jk_housedata')->where("house_id=$id AND pro_id = $pro_id")->field('id,title,points')->select();
+        $points = json_encode($points);
+//        dump(M('jk_housedata')->_sql());
         $imgPath = M('picture')->where("id=$mid")->getField('path');
         $type['path'] = $imgPath;
         $type['mid'] = $mid;
+        $this->assign('points', $points);
         $this->assign('_types', $typeList);
         $this->assign('data', $type);
 //        dump(M('jk_house_typelist')->_sql());
@@ -475,13 +476,12 @@ class TenementController extends AdminController{
      */
     public function edithouse($id = 0){
         $db=M('jk_houseimage_data');
-        $opt = M('jk_house_type')->getField('id,title',true);
 
         if (IS_POST) {
             $title=$id?L('_EDIT_'):L('_ADD_');
             $data = $db->create();
-            $data['title'] = $opt[$data['type_id']];
             $image_code = $_POST['image_code'];
+            $data['remark'] = implode(',',$_POST['housetips']);
             $data['project_id'] =  $_SESSION['proId'];
             if($id>0){
                 $ret = $db->where("id=$id")->save($data);
@@ -490,6 +490,7 @@ class TenementController extends AdminController{
                 }
             }
             else{
+                $data['create_time'] =  $data['updata_time']=time();
                 $ret = $db->add($data);
                 if($image_code){
                     M('picture')->where("id in ($image_code)")->save(array('type'=>'house','target_id'=>$ret));
@@ -502,17 +503,20 @@ class TenementController extends AdminController{
                 $this->error($title.L('_FAIL_').L('_EXCLAMATION_'));
             }
         } else {
-            $this->display();
-            return;
-            $builder = new AdminConfigBuilder();
+
 
             $category='';
             if ($id != 0) {
                 $category = $db->where("id=$id")->find();
-                $category['image_code']=M('picture')->where("target_id=$id AND type='house'")->getField('id',true);
-                $category['image_code'] = implode(',',$category['image_code']);
             }
+            $typeList = M('jk_house_typelist')->where("status=1 AND pro_id=".$_SESSION['proId'])->select();
 //            dump($category);
+            $this->assign('types',$typeList);
+            $this->assign('data',$category);
+            $this->display();
+            return;
+
+            $builder = new AdminConfigBuilder();
             $builder->title(L('新增户型配置'))->keyId()
                 ->keySelect('type_id', L('户型名称'), L('选择户型名称'), $opt)
                 ->keyText('remark', L('户型描述'))
@@ -721,48 +725,49 @@ class TenementController extends AdminController{
         
         //查询回复及图片
         $replies = D('JkComment')->relation(true)->where(['program_id'=>$id])->select();
+
         
-        //查询验收信息
-        $recheck = M('jk_acprogram_recheck')->where("problem_id = '$id'")->select();
-        //一共多少验收次数
-        $recheckcount = M('jk_acprogram_recheck')->where("problem_id = '$id'")->count();
-        //查询验收附件
-        $recheck_etx = M('jk_acprogram_recheck_etx')->where("problem_id = '$id'")->select();
-        if($recheck){
-             //把附件图片放入验收信息中
-            foreach ($recheck as $v){
-                $newrecheck['id'] = $v['accept_id'];
-                $newrecheck['program_id'] = $v['problem_id'];
-                $newrecheck['name'] = $v['accept_user'];
-                $newrecheck['phone'] = $v['accept_user_phone'];
-                $newrecheck['content'] = $v['reason'];
-                $newrecheck['create_time'] = $v['create_time'];
-                $newrecheck['update_time'] = $v['last_modify_time'];
-                $newrecheck['state'] = $v['state'];
-                $newrecheck['reply_time'] = $v['reply_time'];
-                $newrecheck['isrecheck'] = 1;  
-                $imgs = [];
-                foreach ($recheck_etx as $vv){
-                    if ($v['accept_id'] == $vv['accept_id']){
-                        $imgurl['path'] = $vv['attachment_url'];
-                        $imgs[] = $imgurl;
-                    }
-                    
-                }
-                $newrecheck['imgs'] = $imgs;
-                $newrec = [];
-                $newrec[] = $newrecheck;
-                $replies = array_merge($replies,$newrec);//合并数组
-                
-            }
-            //dump($replies);
-            
-        }
+//        //查询验收信息
+//        $recheck = M('jk_acprogram_recheck')->where("problem_id = '$id'")->select();
+//        //一共多少验收次数
+//        $recheckcount = M('jk_acprogram_recheck')->where("problem_id = '$id'")->count();
+//        //查询验收附件
+//        $recheck_etx = M('jk_acprogram_recheck_etx')->where("problem_id = '$id'")->select();
+//        if($recheck){
+//             //把附件图片放入验收信息中
+//            foreach ($recheck as $v){
+//                $newrecheck['id'] = $v['accept_id'];
+//                $newrecheck['program_id'] = $v['problem_id'];
+//                $newrecheck['name'] = $v['accept_user'];
+//                $newrecheck['phone'] = $v['accept_user_phone'];
+//                $newrecheck['content'] = $v['reason'];
+//                $newrecheck['create_time'] = $v['create_time'];
+//                $newrecheck['update_time'] = $v['last_modify_time'];
+//                $newrecheck['state'] = $v['state'];
+//                $newrecheck['reply_time'] = $v['reply_time'];
+//                $newrecheck['isrecheck'] = 1;
+//                $imgs = [];
+//                foreach ($recheck_etx as $vv){
+//                    if ($v['accept_id'] == $vv['accept_id']){
+//                        $imgurl['path'] = $vv['attachment_url'];
+//                        $imgs[] = $imgurl;
+//                    }
+//
+//                }
+//                $newrecheck['imgs'] = $imgs;
+//                $newrec = [];
+//                $newrec[] = $newrecheck;
+//                $replies = array_merge($replies,$newrec);//合并数组
+//
+//            }
+//            //dump($replies);
+//
+//        }
         $replies = array_sort($replies,'create_time');//按照create_time进行升序
         //dump($problem_imgs);
 
         $info['position'] = $info['building'].'-'.$info['unit'].'-'.$info['floor'].'-'.$info['room'];
-        $this->assign('recheckcount',$recheckcount);
+//        $this->assign('recheckcount',$recheckcount);
         $this->assign('replies',$replies);
         $this->assign('problem_imgs',$problem_imgs);
         $this->assign('info',$info);
@@ -805,17 +810,19 @@ class TenementController extends AdminController{
         
         //数据查询
         $info_list = D('JkTask')->relation(true)->where($map)->order("create_time DESC")->page($page,$r)->select();
-        
 
         foreach($info_list as &$info) {
             $info['rate'] = $info['rate'].'%';
-            
+            $taskId=$info['id'];
+            $numRooms = M('jk_room_check_info')->where("task_id='$taskId' AND room_id>0")->count();
+            $numRate =  M('jk_room_check_info')->where("task_id='$taskId' AND status>1 AND room_id>0")->count();
+            $info['rate'] = sprintf("%0.2f",$numRate/$numRooms*100).'%';
             //计算 销项率
             $map_t['task_id'] = $info['id'];
             $total = M('JkAcprogram')->where($map_t)->count();    //总的问题
             
             $map_a['task_id'] = $info['id'];
-            $map_a['problem_status'] = ['in','2,3,4,5'];
+            $map_a['problem_status'] = array('in',array(4,5));
             $agreed = M('JkAcprogram')->where($map_a)->count();   //已销项
             $info['agree_rate'] = sprintf("%0.2f",$agreed/$total*100).'%';
         }
@@ -894,41 +901,73 @@ class TenementController extends AdminController{
         ->keyText('owner_name',L('提交人'))
         ->keyText('create_time',L('创建时间'))
         ->keyText('rate',L('验收进度'))
-        ->keyText('agree_rate',L('销项率'));
-        
+        ->keyText('agree_rate',L('销项率'))
+        ->keyDoAction('task_info?id=###',L('详情'));
         //循环数据分页输出
         $totalcount = count($info_list);
         $info_list = $this->set_num($info_list); //增加任务编号
+
         $builder->data($info_list);
         $builder->pagination($totalcount,$r);
         $builder->display();
     }
-    
+
+    public function task_info($id=''){
+        //数据查询
+        $ataskInfo = M('JkTask')->where("id='$id''")->find();
+
+        $this->display();
+    }
+
     /****************** 房间列表 ******************/
     public function room_list($page=1,$r=20) {
         
         //接收下拉框项目筛选
         $project_id = I('get.ownid','');
-        
+        $proids = '';
         if($project_id){
         	$proids=get_select_projects($project_id);
         	 
         	$map['project_id'] = array('in', $proids);
         
         }
+        $sid = I('get.sid','');
+        if($sid){
+            $map['building_id'] = $sid;
+        }
+        $bid = I('get.bid','');
+        if($bid){
+            $map['building_id'] = $bid;
+        }
+        $uid = I('get.uid','');
+        if($uid){
+            $map['unit_id'] = $uid;
+        }
+        $fid = I('get.fid','');
+        if($fid){
+            $map['floor_id'] = $fid;
+        }
+        $rid = I('get.rid','');
+        if($rid){
+            $map['room_id'] = $rid;
+        }
+        else{
+            $map['room_id']=array('gt',0);
+        }
         //房间列表查询
         $room_list = D('JkAcprogram')->relation(true)->where($map)
-        ->field('project_id,building_id,unit_id,floor_id,room_id,stage_id')
-        ->group('room_id,stage_id')->page($page,$r)->select();
-     
+        ->field('project_id,building_id,unit_id,floor_id,room_id,regional_id')
+        ->group('room_id,regional_id')->page($page,$r)->select();
+//     dump(D('JkAcprogram')->_sql(0));
         $totalcount = count($room_list);
         foreach($room_list as &$room){
             $room['position'] = $room['building'].'-'.$room['unit'].'-'.$room['floor'].'-'.$room['room'];
             $room['id'] = $room['room_id'];
-            
-            $room['stage']=M("jk_check_option")->where("item_id=".$room['stage_id']."")->getField("item_name");
+
+            $room['stage']=M("jk_acoption")->where("id=".$room['regional_id']."")->getField("title");
         }
-        
+        unset($room);
+//        dump($room_list);
         //建立模板
         $builder = new AdminListBuilder();
         $builder->title(L('房间列表'));
@@ -958,6 +997,102 @@ class TenementController extends AdminController{
         		'',
         		'根据项目筛选',
         		array('data-title' => ('选择项目')));
+//        构建分期列表
+        $proId=$_SESSION['proId'];
+        if(!empty($project_id)&&!empty($proids)){
+            $proId = $proids[0];
+        }
+        $stageFleter=array();
+        $stageFleter[0]['id']='';
+        $stageFleter[0]['value']='全部';
+        $proCode = M('jk_project')->where("id=$proId")->getField('ProjectNumber');
+
+        if($proCode>''){
+            $stageData = M('jk_stage')->where("ParentCode='$proCode' AND status=1")->field('DISTINCT(StagesCode),StagesName')->select();
+            if($stageData){
+                $j=1;
+                foreach ($stageData as $s){
+                    $stageFleter[$j]['id']=$s['StagesCode'];
+                    $stageFleter[$j]['value']=$s['StagesName'];
+                    $j++;
+                }
+                $builder->select(L('分期：'), 'sid', 'select', L('选择分期'), '', '', $stageFleter);
+            }
+        }
+
+        //构建的楼栋列表
+
+        if(!empty($sid)){
+            $floorlist  = M('jk_floor')->where("status=1 AND pid=0 AND StagesCode='$sid'")->order('create_time desc')->select();
+//            dump( M('jk_floor')->_sql());
+            $buildFelter=array();
+            $buildFelter[0]['id']='';
+            $buildFelter[0]['value']='全部';
+            if($floorlist){
+                $j=1;
+                foreach ($floorlist as $b){
+                    $buildFelter[$j]['id']=$b['id'];
+                    $buildFelter[$j]['value']=$b['title'];
+                    $j++;
+                }
+            }
+            $builder->select(L('楼栋：'), 'bid', 'select', L('选择楼栋'), '', '', $buildFelter);
+        }
+
+        //构建的单元列表
+        if(!empty($bid)){
+            $unitlist  = M('jk_floor')->where("status=1 AND pid=$bid")->order('create_time desc')->select();
+//            dump(M('jk_floor')->_sql());
+            $unitFelter=array();
+            $unitFelter[0]['id']='';
+            $unitFelter[0]['value']='全部';
+            if($unitlist){
+                $j=1;
+                foreach ($unitlist as $u){
+                    $unitFelter[$j]['id']=$u['id'];
+                    $unitFelter[$j]['value']=$u['title'];
+                    $j++;
+                }
+            }
+
+            $builder->select(L('单元：'), 'uid', 'select', L('选择单元'), '', '', $unitFelter);
+        }
+
+        //构建楼层列表
+        if(!empty($uid)){
+            $floorlist  = M('jk_floor')->where("status=1 AND pid=$uid")->order('create_time desc')->select();
+
+            $floorFelter=array();
+            $floorFelter[0]['id']='';
+            $floorFelter[0]['value']='全部';
+            if($floorlist){
+                $j=1;
+                foreach ($floorlist as $f){
+                    $floorFelter[$j]['id']=$f['id'];
+                    $floorFelter[$j]['value']=$f['title'];
+                    $j++;
+                }
+            }
+            $builder->select(L('楼层：'), 'fid', 'select', L('选择楼层'), '', '', $floorFelter);
+        }
+
+        //构建房间列表
+        if(!empty($fid)){
+            $roomlist  = M('jk_floor')->where("status=1 AND pid=$fid")->order('create_time desc')->select();
+
+            $roomFelter=array();
+            $roomFelter[0]['id']='';
+            $roomFelter[0]['value']='全部';
+            if($roomlist){
+                $j=1;
+                foreach ($roomlist as $r){
+                    $roomFelter[$j]['id']=$r['id'];
+                    $roomFelter[$j]['value']=$r['title'];
+                    $j++;
+                }
+                $builder->select(L('房间：'), 'rid', 'select', L('选择房间'), '', '', $roomFelter);
+            }
+        }
         //$builder->select(L('项目：'), 'project_id', 'select', L('项目'), '', '', $projectArr);
 		//导出房间详情
 //         $attr['target-form'] = 'ids';
@@ -971,7 +1106,10 @@ class TenementController extends AdminController{
         ->keyDoAction('room_info?id=###',L('详情'));
         
         $builder->data($room_list);
-        $builder->pagination($totalcount,$r);
+        if($totalcount>$r){
+            $builder->pagination($totalcount,$r);
+        }
+
         $builder->display();
     }
     
@@ -981,27 +1119,32 @@ class TenementController extends AdminController{
         
         //查询该房间下所有问题
         $rooms = D('JkAcprogram')->relation(true)->where(['room_id'=>$id])->select();
-        $rooms[0]['stage']=M("jk_check_option")->where("item_id=".$rooms[0]['stage_id']."")->getField("item_name");
+        $rooms[0]['stage']=M("jk_acoption")->where("id=".$rooms[0]['regional_id']."")->getField("title");
         //查询户型图
-        $map['house_type_picture_id'] = $rooms[0]['house_img_id'];
+        $map['id'] = $rooms[0]['house_img_id'];
 
-        $house_img_url = M('JkHouseImage')->where($map)->getField('picture_url');
+        $house_img_url = M('Picture')->where($map)->getField('path');
         //如果没有户型图，就不存
-        if(!$house_img_url || $house_img_url==null || $house_img_url==''){                   
-        }else{
-            //图片地址、文件路径、文件名称，类型
-            $file_url = './house_img';
-            $file_name=$id.'.jpg';//房间id
-            $upload_img=getImage($house_img_url,$file_url,$file_name);
-           // var_dump($upload_img);
-            $house_img_url=$upload_img['save_path'];
-        }
+//        if(!$house_img_url || $house_img_url==null || $house_img_url==''){
+//        }else{
+//            //图片地址、文件路径、文件名称，类型
+//            $file_url = './house_img';
+//            $file_name=$id.'.jpg';//房间id
+//            $upload_img=getImage($house_img_url,$file_url,$file_name);
+//           // var_dump($upload_img);
+//            $house_img_url=$upload_img['save_path'];
+//        }
         //查询房间里所有问题坐标
-        $coordinates = "";
-        foreach($rooms as $room){
-            $coordinates .= M('JkAcprogramPoint')->where(['problem_id'=>$room['problem_id'],'state'=>'normal'])->getField('coordinate')."|";    
-        }
+        $coordinates = array();
+        foreach($rooms as $k=>$room){
+            $point = M('JkAcprogramPoint')->where(['problem_id'=>$room['problem_id'],'state'=>'normal'])->getField('coordinate');
+            if($point>""&&json_decode($point)){
+                $coordinates[$k+1]= json_decode($point) ;
+            }
 
+        }
+        $coordinates=json_encode($coordinates);
+//        dump($coordinates);
         $rooms[0]['position'] = $rooms[0]['building'].'-'.$rooms[0]['unit'].'-'.$rooms[0]['floor'].'-'.$rooms[0]['room'];
         foreach($rooms as &$v){
             foreach($v as &$vv){
@@ -1018,9 +1161,9 @@ class TenementController extends AdminController{
         $this->assign('house_picture_url',$house_img_url);
         $this->assign("room_id",$id);
         $this->assign('rooms',$rooms);
-        
-        $coordinates=substr($coordinates,0,strlen($coordinates)-1);
+
         $this->assign('coordinates',$coordinates);
+//        dump($coordinates);
         $this->display();
     }
     
@@ -1289,10 +1432,10 @@ class TenementController extends AdminController{
     		$this->assign('house_picture_url',$house_img_url);
     
     		$this->assign('rooms',$rooms);
-    		$this->assign('css1',$css1);
-    		$this->assign('css2',$css2);
-    		$this->assign('js1',$js1);
-    		$this->assign('js2',$js2);
+//    		$this->assign('css1',$css1);
+//    		$this->assign('css2',$css2);
+//    		$this->assign('js1',$js1);
+//    		$this->assign('js2',$js2);
     		 
     		$coordinates=substr($coordinates,0,strlen($coordinates)-1);
     		$this->assign('coordinates',$coordinates);
@@ -1369,7 +1512,7 @@ class TenementController extends AdminController{
          if (IS_POST) {
 
              $data = $db->create();
-             $data['project_id'] =  $_SESSION['proId'];
+             $data['pro_id'] =  $_SESSION['proId'];
              if($id>0){
                  $data['update_time']=time();
                  $ret = $db->where("id=$id")->save($data);
@@ -1408,7 +1551,8 @@ class TenementController extends AdminController{
      public function house_typelist($page=1, $r=20){
          $db=M('jk_house_typelist');
          $map['status'] = array('egt', 0);
-
+         $pro_id = $_SESSION['proId'];
+         $map['pro_id'] = $pro_id;
          $goodsList = $db->where($map)->order('id')->page($page, $r)->select();
          $totalCount = $db->where($map)->count();
 
@@ -1432,6 +1576,21 @@ class TenementController extends AdminController{
          $builder->data($goodsList);
          $builder->pagination($totalCount, $r);
          $builder->display();
+     }
+
+     public function searchBuilds($name=''){
+         $pro_id = $_SESSION['proId'];
+
+         $where="status>0 AND projectid=$pro_id AND pid=0";
+         if($name>''){
+             $where.=" AND title like '%$name%'";
+         }
+         $list = M('jk_floor')->where($where)->getField('id,title as text',true);
+
+//         echo (M('jk_floor')->_sql());
+         $ret['status']=1;
+         $ret['item']=$list;
+         echo json_encode($ret);
      }
 
 }   //class end

@@ -12,7 +12,7 @@ namespace App\Controller;
 use Think\Controller;
 use User\Api\UserApi;
 
-
+define('__MYPRE',C('DB_PREFIX'));
 class JkProjectForAppController extends Controller
 {
 
@@ -468,7 +468,29 @@ class JkProjectForAppController extends Controller
                     $tmpTaskId = $taskId;
                     $taskIds[] = $tmpTaskId;
                 }
-                $result = M('jk_room_check_info')->where("id=" . $a['id'])->save($a);
+                //查询房间问题状态
+                //待整改
+                $status3=M('jk_room_check_info')->where("(problem_status<2 OR problem_status=6) AND task_id=".$a['task_id']." AND room_id=" . $a['room_id'])->find();
+                if($status3){
+                    $a['staths']=3;
+                    $result = M('jk_room_check_info')->where("id=" . $a['id'])->save($a);
+                }
+                else{
+                    //待复核
+                    $status4=M('jk_room_check_info')->where("problem_status=7 AND task_id=".$a['task_id']." AND room_id=" . $a['room_id'])->find();
+                    if($status4){
+                        $a['staths']=4;
+                        $result = M('jk_room_check_info')->where("id=" . $a['id'])->save($a);
+                    }
+                    else{
+                        //已完成
+                        $status5=M('jk_room_check_info')->where("(problem_status=4 OR problem_status=5 OR problem_status=8) AND task_id=".$a['task_id']." AND room_id=" . $a['room_id'])->find();
+                        if($status5){
+                            $a['staths']=5;
+                            $result = M('jk_room_check_info')->where("id=" . $a['id'])->save($a);
+                        }
+                    }
+                }
 
             }
             foreach ($taskIds as $t) {
@@ -520,6 +542,7 @@ class JkProjectForAppController extends Controller
         //echo json_encode($adata);exit;
         //问题信息
         if ($acprogram && is_array($acprogram)) {
+            $push = new JpushController();
             $rep['program'] = $acprogram;
             foreach ($acprogram as $k => $a) {
                 $acprogramid = $a['problem_id'];//id
@@ -529,8 +552,8 @@ class JkProjectForAppController extends Controller
                     $save['problem_status'] = $a['problem_status'];
 
                     if ($a['problem_status'] == 8) {
-                        $save['remark'] = 1;
-                        if ($acprogramt['remark'] == 1) {
+                        $save['urgency_level'] = 1;
+                        if ($acprogramt['urgency_level'] == 1) {
                             $save['problem_status'] = 5;//工程部第二次不整改时，进行作废
                         }
                     }
@@ -538,24 +561,26 @@ class JkProjectForAppController extends Controller
                     $result = M('jk_acprogram')->where("problem_id = '$acprogramid'")->save($save);
 
 //                    更新房间检查状态
-                    $taskId=$a['task_id'];
-                    $roomId = $a['room_id'];
-
-                    $data=array();
-                    if($a['problem_status'] ==4||$a['problem_status'] ==5){
-                        $data['status'] = 5;
-                    }
-                    elseif ($a['problem_status'] ==7||$a['problem_status'] ==8){
-                        $data['status'] = 4;
-                    }
-                    else{
-                        $data['status'] = 3;
-                    }
-                    M('jk_room_check_info')->where("task_id='$taskId' AND room_id = $roomId")->save($data);
-                    file_put_contents('appRequst.log',  M('jk_room_check_info')->_sql(). "\n");
-                } else {//不存在进行添加
+//                    $taskId=$a['task_id'];
+//                    $roomId = $a['room_id'];
+//
+//                    $data=array();
+//                    if($a['problem_status'] ==4||$a['problem_status'] ==5){
+//                        $data['status'] = 5;
+//                    }
+//                    elseif ($a['problem_status'] ==7||$a['problem_status'] ==8){
+//                        $data['status'] = 4;
+//                    }
+//                    else{
+//                        $data['status'] = 3;
+//                    }
+//                    M('jk_room_check_info')->where("task_id='$taskId' AND room_id = $roomId")->save($data);
+//                    file_put_contents('appRequst.log',  M('jk_room_check_info')->_sql(). "\n");
+                }
+                else {//不存在进行添加
                     //$a['create_time'] = $updateTime;
                     $result = M('jk_acprogram')->add($a);
+
 //                    更新房间检查状态
                     $taskId=$a['task_id'];
                     $roomId = $a['room_id'];
@@ -563,6 +588,17 @@ class JkProjectForAppController extends Controller
                     $data=array();
                     $data['status'] = 3;
                     M('jk_room_check_info')->where("task_id='$taskId' AND room_id = $roomId")->save($data);
+
+
+                    //新增问题时，发送消息提醒项目下工程人员进行派单
+//                    先获取对应整改单位同级的工程部
+                    $registrationids = getRidsFromGroupId($a['contractor_id']);
+
+                    file_put_contents('push.log', time() . '=================>'.json_encode($registrationids) . "\r\n", FILE_APPEND);
+//                    $registrationids = array('170976fa8aa6345ae2f');
+                    $content = "您有新的待派单问题，请确认";
+                    $ret = $push->send_pub($registrationids, $content, 'acprogram');
+                    pushLog($registrationids, $content, 'acprogram', '', $ret['message'], $ret['code'], $a['problem_id']);
                 }
                 $rep['sql'] = M()->getLastsql();
 //                 if($result==false){
@@ -763,11 +799,18 @@ class JkProjectForAppController extends Controller
     {
         dump('tsetPush');
         $push = new JpushController();
-        $registrationids = array('141fe1da9e8c752bc4c');
-        $ret = $push->send_pub($registrationids, "您有新的整改任务，请更新确认");
+        $registrationids = array('170976fa8aa6345ae2f');
+        $content = "您有新的待派单问题，请确认";
+        $ret = $push->send_pub($registrationids, $content, 'acprogram');
+        pushLog($registrationids, $content, 'acprogram', '', $ret['message'], $ret['code'], '15342398464301');
         dump($ret);
     }
 
+    public function testOnline(){
+        $rep['status'] = 0;
+        echo json_encode($rep);
+        exit;
+    }
     /**
      *函数用途描述：获取巡查问题统计数据详情
      * @date：2018年6月13日 上午9:59:16
@@ -818,10 +861,10 @@ class JkProjectForAppController extends Controller
                     $where .= " AND type=0 AND (status=0 OR status=2) AND (limit_time*1000*24*3600+create_time)>$today ";
                     break;
                 case 'yes_over'://按时完成
-                    $where .= " AND type=0 AND (status=1 OR status=3) AND (limit_time*1000*24*3600+create_time)>update_time ";
+                    $where .= " AND type=0 AND (status=1 OR status=3) AND is_over=0 ";
                     break;
                 case 'no_over'://超期完成
-                    $where .= " AND type=0 AND (status=1 OR status=3) AND (limit_time*1000*24*3600+create_time)<update_time ";
+                    $where .= " AND type=0 AND (status=1 OR status=3) AND is_over=1 ";
                     break;
                 default:
                     break;
@@ -832,7 +875,7 @@ class JkProjectForAppController extends Controller
                 $uid = $flitr['uid'];
                 if ($flitr['tids'] > '') {
                     $tids = $flitr['tids'];
-                    $where .= " AND (authid=$uid OR target_id IN ($tids))";
+                    $where .= " AND (authid=$uid OR target_id IN ('$tids'))";
                 } else {
                     $where .= " AND authid=$uid ";
                 }
@@ -886,11 +929,11 @@ class JkProjectForAppController extends Controller
             $sql = $db->_sql();
 
 //        按时完成
-            $num3 = $db->where("ownid=$proID AND type=0 AND (status=1 OR status=3) AND (limit_time*1000*24*3600+create_time)>update_time")
+            $num3 = $db->where("ownid=$proID AND type=0 AND (status=1 OR status=3) AND is_over=0")
                 ->getField('COUNT(1) AS num');
 
 //        超期完成
-            $num4 = $db->where("ownid=$proID AND type=0 AND (status=1 OR status=3) AND (limit_time*1000*24*3600+create_time)<update_time")
+            $num4 = $db->where("ownid=$proID AND type=0 AND (status=1 OR status=3) AND is_over=1")
                 ->getField('COUNT(1) AS num');
 
             $adata['count1'] = $num1;
@@ -1586,7 +1629,9 @@ class JkProjectForAppController extends Controller
                 $where .= " AND room_id = $room_id ";
             }
             if ($option_pid > "") {
-                $where .= " AND regional_id IN ($option_pid) ";
+//                获取检查项下的所以检查项id
+                $option_pid=getChileIds('jk_acoption',$option_pid);
+                $where .= " AND check_item_id IN ($option_pid) ";
             }
             if (!($status === "")) {
                 $where .= " AND problem_status IN ($status) ";
@@ -2007,21 +2052,22 @@ class JkProjectForAppController extends Controller
     public function loaddateRT($page = 0, $count = 10, $type = 'images', $filtr = '')
     {
 
-        file_put_contents('apptest.log', $_POST);
+//        file_put_contents('apptest.log', $_POST);
         //获取前两个月的时间错
         $where = "type=0";
         $flitr = json_decode($filtr, true);
         $page = $page < 0 ? 0 : $page;
         $count = $count < 1 ? 10 : $count;
         $count = $count > 100 ? 100 : $count;
-        file_put_contents('apptest.log', $flitr);
+//        file_put_contents('apptest.log', $flitr);
+        file_put_contents('apptest.log', $type);
         if ($type == 'program') {
 //            施工单位只查看对应施工单位绑定的楼栋的数据
             if (3 == $flitr['level']) {
                 $uid = $flitr['uid'];
                 if ($flitr['tids'] > '') {
                     $tids = $flitr['tids'];
-                    $where .= " AND (authid=$uid OR target_id IN ($tids))";
+                    $where .= " AND (authid=$uid OR target_id IN ('$tids'))";
                 } else {
                     $where .= " AND authid=$uid ";
                 }
@@ -2179,6 +2225,7 @@ class JkProjectForAppController extends Controller
 
         }
         elseif ($type == 'measuredProgram') {
+            file_put_contents('apptest.log', "1111");
             $where = "type=1";
 //            施工单位只查看对应施工单位绑定的楼栋的数据
             if (3 == $flitr['level']) {
@@ -2208,6 +2255,7 @@ class JkProjectForAppController extends Controller
             file_put_contents('apptest.log', $where);
             $adata = M('jk_program')->where($where)->order('create_time DESC')->limit($page * $count, $count)->select();
             $sql = M('jk_program')->_sql();
+            file_put_contents('time.log', $sql);
             $totelCount = M('jk_program')->where($where)->count();
 
 //            构造需要下载的图片数据
@@ -3749,7 +3797,258 @@ class JkProjectForAppController extends Controller
         }
         echo "未超时:" . $count1 . "  已超时：" . $count2;
     }
+
+//    构造每个项目每日统计数据
+    public function everydayStatistics(){
+
+        set_time_limit(360);
+        //php获取今日开始时间戳和结束时间戳
+        $beginToday=mktime(0,0,0,date('m'),date('d'),date('Y'));
+        $endToday=mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1;
+
+        //php获取昨日起始时间戳和结束时间戳
+        $beginYesterday=mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+        $endYesterday=mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+
+        //        分户验收
+        $where = " state='normal' AND (problem_status!=4 AND problem_status!=5 AND problem_status!=8)";
+        $proIds = M('jk_acprogram')->where($where)->group('project_id')->getField('project_id',true);
+        foreach ($proIds as $proId){
+            $message=array();
+            $message['cate']=0;//消息
+            $message['module']=2;//模块 验收
+            $message['pro_id']=$proId;
+//            按整改单位统计数据
+//            SELECT count(target_id),target_id FROM `irosn_jk_program` where type=0 AND ownid=15 GROUP BY(target_id);
+//            $where = " type=0 AND (status=0 OR status=2) AND (limit_time*1000*24*3600+create_time)";
+
+            $auths=M('jk_acprogram')->where("project_id=$proId AND $where")->group('contractor_id')->getField('contractor_id',true);
+//            dump($auths);
+            $totalWait=0;
+            $totalOver=0;
+            $totalNew=0;
+            $message['title']='工作提醒';
+            foreach ($auths as $auth){
+
+                $message['auth_id']=$auth;
+                $wait=M('jk_acprogram')->where("project_id=$proId AND contractor_id=$auth AND $where")->count('problem_id');
+
+                $overWhere = $where." AND corrected_time_limit<='".date("Y-m-d H:i:s",$endToday)."' AND corrected_time_limit>'"
+                    .date("Y-m-d H:i:s",$beginToday) ."'";
+                $over=M('jk_acprogram')->where("project_id=$proId AND contractor_id=$auth AND $overWhere")->count('problem_id');
+
+                $newWhere = $where." AND create_time<='".date("Y-m-d H:i:s",$endYesterday)."'' AND create_time> '"
+                    .date("Y-m-d H:i:s",$beginYesterday)."'";
+                $new=M('jk_acprogram')->where("project_id=$proId AND contractor_id=$auth AND $newWhere")->count('problem_id');
+
+                $message['create_time']=time();
+                $message['new']=$new;
+                $message['wait']=$wait;
+                $message['over']=$over;
+                $totalNew+=$new;
+                $totalOver+=$over;
+                $totalWait+=$wait;
+                $message['content']="昨日新增问题".$new."，遗留未处理问题".$wait."，今日将超期问题".$over;
+                M("jk_messagelog")->add($message);
+
+            }
+            $message['auth_id']=0;
+            $message['create_time']=time();
+            $message['new']=$totalNew;
+            $message['wait']=$totalWait;
+            $message['over']=$totalOver;
+            $message['content']="昨日新增问题".$totalNew."，遗留未处理问题".$totalWait."，今日将超期问题".$totalOver;
+            M("jk_messagelog")->add($message);
+        }
+
+        $beginToday .='000';
+        $endToday .='000';
+        $beginYesterday .='000';
+        $endYesterday .='000';
+//        日常巡查
+//        查询有未整改问题的项目
+//        SELECT ownid FROM `irosn_jk_program` where type=0 AND (`status`=0 OR `status`=2)  GROUP BY(ownid);
+        $where = " type=0 AND (status=0 OR status=2)";
+        $proIds = M('jk_program')->where($where)->group('ownid')->getField('ownid',true);
+        foreach ($proIds as $proId) {
+
+            $message=array();
+            $message['cate']=0;//消息
+            $message['module']=0;//模块 日常
+            $message['pro_id']=$proId;
+//            按整改单位统计数据
+
+//            SELECT count(target_id),target_id FROM `irosn_jk_program` where type=0 AND ownid=15 GROUP BY(target_id);
+//            $where = " type=0 AND (status=0 OR status=2) AND (limit_time*1000*24*3600+create_time)";
+
+            $auths=M('jk_program')->where("ownid=$proId AND $where")->group('target_id')->getField('target_id',true);
+//            dump($auths);
+            $totalWait=0;
+            $totalOver=0;
+            $totalNew=0;
+            $message['title']='工作提醒';
+            foreach ($auths as $auth){
+
+                $message['auth_id']=$auth;
+                $wait=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $where")->count('init_id');
+
+                $overWhere = $where." AND (limit_time*1000*24*3600+create_time)<=".$endToday." AND (limit_time*1000*24*3600+create_time)>".$beginToday ;
+                $over=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $overWhere")->count('init_id');
+
+                $newWhere = $where." AND create_time<=$endYesterday AND create_time> $beginYesterday";
+                $new=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $newWhere")->count('init_id');
+
+                $message['create_time']=time();
+                $message['new']=$new;
+                $message['wait']=$wait;
+                $message['over']=$over;
+                $totalNew+=$new;
+                $totalOver+=$over;
+                $totalWait+=$wait;
+                $message['content']="昨日新增问题".$new."，遗留未处理问题".$wait."，今日将超期问题".$over;
+                M("jk_messagelog")->add($message);
+
+            }
+            $message['auth_id']=0;
+            $message['create_time']=time();
+            $message['new']=$totalNew;
+            $message['wait']=$totalWait;
+            $message['over']=$totalOver;
+            $message['content']="昨日新增问题".$totalNew."，遗留未处理问题".$totalWait."，今日将超期问题".$totalOver;
+            M("jk_messagelog")->add($message);
+//            break;
+
+        }
+
+
+//        实测实量
+        $where = " type=1 AND (status=0 OR status=2)";
+        $proIds = M('jk_program')->where($where)->group('ownid')->getField('ownid',true);
+        foreach ($proIds as $proId) {
+
+
+            $message=array();
+            $message['cate']=0;//消息
+            $message['module']=1;//模块 实测
+            $message['pro_id']=$proId;
+//            按整改单位统计数据
+//            SELECT count(target_id),target_id FROM `irosn_jk_program` where type=0 AND ownid=15 GROUP BY(target_id);
+//            $where = " type=0 AND (status=0 OR status=2) AND (limit_time*1000*24*3600+create_time)";
+
+            $auths=M('jk_program')->where("ownid=$proId AND $where")->group('target_id')->getField('target_id',true);
+//            dump($auths);
+            $totalWait=0;
+            $totalOver=0;
+            $totalNew=0;
+            $message['title']='工作提醒';
+            foreach ($auths as $auth){
+
+                $message['auth_id']=$auth;
+                $wait=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $where")->count('init_id');
+
+                $overWhere = $where." AND (limit_time*1000*24*3600+create_time)<=".$endToday." AND (limit_time*1000*24*3600+create_time)>".$beginToday ;
+                $over=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $overWhere")->count('init_id');
+
+                $newWhere = $where." AND create_time<=$endYesterday AND create_time> $beginYesterday";
+                $new=M('jk_program')->where("ownid=$proId AND target_id=$auth AND $newWhere")->count('init_id');
+
+                $message['create_time']=time();
+                $message['new']=$new;
+                $message['wait']=$wait;
+                $message['over']=$over;
+                $totalNew+=$new;
+                $totalOver+=$over;
+                $totalWait+=$wait;
+                $message['content']="昨日新增问题".$new."，遗留未处理问题".$wait."，今日将超期问题".$over;
+                M("jk_messagelog")->add($message);
+
+            }
+            $message['auth_id']=0;
+            $message['create_time']=time();
+            $message['new']=$totalNew;
+            $message['wait']=$totalWait;
+            $message['over']=$totalOver;
+            $message['content']="昨日新增问题".$totalNew."，遗留未处理问题".$totalWait."，今日将超期问题".$totalOver;
+            M("jk_messagelog")->add($message);
+//            break;
+        }
+
+    }
+
+    /**
+     * 获取用户消息列表
+     * @param int $page
+     * @param int $count
+     * @param string $filtr
+     */
+    public function messageList($page=0,$count=100,$filtr=''){
+//        $adownData=array();
+        $filtr = json_decode($filtr, true);
+        $md=$filtr['md'];
+        $st=$filtr['st'];
+        $power=$filtr['powerLevel'];
+        $userGroup=$filtr['userGroup'];
+        $proId=$filtr['proId'];
+        $uid=$filtr['uid'];
+//        $data=M("jk_messagelog")->select();
+        $where="pro_id=$proId ";
+
+//        TODO:先只查询消息
+        $where .=" AND cate=0";
+        $uwhere=' 1=1 ';
+        if($st>''){
+            if($st=='1'){
+                $uwhere =" f.uids = 1";
+            }
+            elseif ($st=='0'){
+                $uwhere =" f.uids = 0";
+            }
+
+        }
+        if($md>''){
+            $where .= " AND module in ($md)";
+        }
+        if($power==3&&$userGroup>''){
+            $where .= " AND auth_id in ($userGroup) ";
+        }
+        else{
+            $where .= " AND auth_id =0";
+        }
+//        select * from (
+//SELECT   m.*,CASE mr.uid when 165 then 1 else 0 end as uids  FROM irosn_jk_messagelog m LEFT JOIN irosn_jk_messagelog_read mr ON m.mid = mr.mid AND mr.uid=165 WHERE
+//( m.pro_id=21 AND m.cate=0 AND
+//m.auth_id =0 ) )f where f.uids = 0 ORDER BY f.create_time DESC LIMIT 0,100
+        $sql = "select * from (".
+            "SELECT   m.*,CASE mr.uid when ".$uid." then 1 else 0 end as uids  FROM ".__MYPRE."jk_messagelog m LEFT JOIN ".__MYPRE."jk_messagelog_read mr ON".
+            " m.mid = mr.mid AND mr.uid=".$uid." WHERE  ".$where." ) f ".
+            "where ".$uwhere." ORDER BY f.create_time DESC LIMIT ".$page * $count.",".$count." ";
+
+
+        $adata = M()->query($sql);
+
+//        $adata = M()->table(__MYPRE.'jk_messagelog m')->join('LEFT JOIN '.__MYPRE.'jk_messagelog_read  mr  ON m.mid = mr.mid ')
+//            ->where("$where ")
+//            ->limit($page * $count, $count)->order('m.create_time DESC')->field('m.*,CASE mr.uid when 165 then 1 else 0 end as uid')->select();
+        $sql=M()->_sql();
+        $adownData=array();
+        $adownData['data'] = $adata;
+//        $adownData['count'] = $totelCount;
+        $adownData['sql'] = $sql;
+        echo json_encode($adownData);
+
+    }
+
+    public function messageRead($uid,$mid){
+        $res['status'] = 1;
+        $find=M("jk_messagelog_read")->where("mid=$mid AND uid=$uid")->getField('id');
+        if(!$find){
+            $data=array();
+            $data['uid']=$uid;
+            $data['mid']=$mid;
+            $data['create_time']=time();
+            $retId=M("jk_messagelog_read")->add($data);
+            $res['data']=$retId;
+        }
+        echo json_encode($res);
+    }
 }/* class end */
-
-
-?>
